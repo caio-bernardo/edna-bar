@@ -1,0 +1,1224 @@
+openapi: 3.0.3
+info:
+  title: Edna Bar Book Printing API
+  description: |
+    A comprehensive RESTful API for managing book printing operations.
+    
+    This API provides complete functionality for:
+    - Managing books, authors, and publishers
+    - Handling printing companies (private and contracted)
+    - Creating and tracking printing contracts
+    - Scheduling and monitoring printing jobs
+    - Real-time delivery tracking
+    
+    Built with Go following clean architecture principles.
+  version: 1.0.0
+  contact:
+    name: API Support
+    url: https://github.com/edna-bar/api
+    email: support@edna-bar.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: https://edna-bar.com/terms
+
+servers:
+  - url: http://localhost:8080/api
+    description: Development server
+  - url: https://api.edna-bar.com/api
+    description: Production server
+
+tags:
+  - name: books
+    description: Book management operations
+  - name: authors
+    description: Author management operations
+  - name: publishers
+    description: Publisher management operations
+  - name: printing-companies
+    description: Printing company management operations
+  - name: contracts
+    description: Contract management operations
+  - name: printing-jobs
+    description: Printing job management operations
+  - name: system
+    description: System health and information endpoints
+
+paths:
+  # Books endpoints
+  /livros:
+    get:
+      tags:
+        - books
+      summary: List all books
+      description: Retrieve a list of all books in the system
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of books to return
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          description: Number of books to skip
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: title
+          in: query
+          description: Filter books by title (partial match)
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Book'
+                  total:
+                    type: integer
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - books
+      summary: Create a new book
+      description: Add a new book to the system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBookRequest'
+      responses:
+        '201':
+          description: Book created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /livros/{isbn}:
+    get:
+      tags:
+        - books
+      summary: Get book by ISBN
+      description: Retrieve a specific book by its ISBN
+      parameters:
+        - name: isbn
+          in: path
+          required: true
+          description: Book ISBN
+          schema:
+            type: string
+            pattern: '^(97[89])?[\d\-]{10,17}$'
+      responses:
+        '200':
+          description: Book found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      tags:
+        - books
+      summary: Update book
+      description: Update an existing book
+      parameters:
+        - name: isbn
+          in: path
+          required: true
+          description: Book ISBN
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBookRequest'
+      responses:
+        '200':
+          description: Book updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - books
+      summary: Delete book
+      description: Remove a book from the system
+      parameters:
+        - name: isbn
+          in: path
+          required: true
+          description: Book ISBN
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Book deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /livros/{isbn}/authors:
+    get:
+      tags:
+        - books
+      summary: Get book authors
+      description: Retrieve all authors of a specific book
+      parameters:
+        - name: isbn
+          in: path
+          required: true
+          description: Book ISBN
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Authors found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Author'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - books
+      summary: Add author to book
+      description: Associate an author with a book
+      parameters:
+        - name: isbn
+          in: path
+          required: true
+          description: Book ISBN
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rg:
+                  type: string
+                  description: Author's RG
+              required:
+                - rg
+      responses:
+        '201':
+          description: Author added to book successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # Authors endpoints
+  /autores:
+    get:
+      tags:
+        - authors
+      summary: List all authors
+      description: Retrieve a list of all authors in the system
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of authors to return
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: name
+          in: query
+          description: Filter authors by name (partial match)
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Author'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - authors
+      summary: Create a new author
+      description: Add a new author to the system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAuthorRequest'
+      responses:
+        '201':
+          description: Author created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /autores/{rg}:
+    get:
+      tags:
+        - authors
+      summary: Get author by RG
+      description: Retrieve a specific author by their RG
+      parameters:
+        - name: rg
+          in: path
+          required: true
+          description: Author RG
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Author found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      tags:
+        - authors
+      summary: Update author
+      description: Update an existing author
+      parameters:
+        - name: rg
+          in: path
+          required: true
+          description: Author RG
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAuthorRequest'
+      responses:
+        '200':
+          description: Author updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - authors
+      summary: Delete author
+      description: Remove an author from the system
+      parameters:
+        - name: rg
+          in: path
+          required: true
+          description: Author RG
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Author deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /autores/{rg}/books:
+    get:
+      tags:
+        - authors
+      summary: Get author's books
+      description: Retrieve all books written by a specific author
+      parameters:
+        - name: rg
+          in: path
+          required: true
+          description: Author RG
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Books found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # Publishers endpoints
+  /editoras:
+    get:
+      tags:
+        - publishers
+      summary: List all publishers
+      description: Retrieve a list of all publishers in the system
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Publisher'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - publishers
+      summary: Create a new publisher
+      description: Add a new publisher to the system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePublisherRequest'
+      responses:
+        '201':
+          description: Publisher created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Publisher'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /editoras/{id}:
+    get:
+      tags:
+        - publishers
+      summary: Get publisher by ID
+      description: Retrieve a specific publisher by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Publisher ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Publisher found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Publisher'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      tags:
+        - publishers
+      summary: Update publisher
+      description: Update an existing publisher
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Publisher ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePublisherRequest'
+      responses:
+        '200':
+          description: Publisher updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Publisher'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - publishers
+      summary: Delete publisher
+      description: Remove a publisher from the system
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Publisher ID
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Publisher deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # Printing Companies endpoints
+  /graficas:
+    get:
+      tags:
+        - printing-companies
+      summary: List all printing companies
+      description: Retrieve a list of all printing companies
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PrintingCompany'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - printing-companies
+      summary: Create a new printing company
+      description: Add a new printing company to the system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePrintingCompanyRequest'
+      responses:
+        '201':
+          description: Printing company created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrintingCompany'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /graficas/{id}:
+    get:
+      tags:
+        - printing-companies
+      summary: Get printing company by ID
+      description: Retrieve a specific printing company by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Printing company ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Printing company found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrintingCompany'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # Contracts endpoints
+  /contratos:
+    get:
+      tags:
+        - contracts
+      summary: List all contracts
+      description: Retrieve a list of all contracts
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Contract'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - contracts
+      summary: Create a new contract
+      description: Add a new contract to the system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateContractRequest'
+      responses:
+        '201':
+          description: Contract created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contract'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /contratos/{id}:
+    get:
+      tags:
+        - contracts
+      summary: Get contract by ID
+      description: Retrieve a specific contract by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Contract ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Contract found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contract'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # Printing Jobs endpoints
+  /printing-jobs:
+    get:
+      tags:
+        - printing-jobs
+      summary: List all printing jobs
+      description: Retrieve a list of all printing jobs
+      parameters:
+        - name: status
+          in: query
+          description: Filter by job status
+          required: false
+          schema:
+            type: string
+            enum: [pending, in_progress, completed, overdue]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PrintingJob'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - printing-jobs
+      summary: Create a new printing job
+      description: Schedule a new printing job
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePrintingJobRequest'
+      responses:
+        '201':
+          description: Printing job created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrintingJob'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /printing-jobs/overdue:
+    get:
+      tags:
+        - printing-jobs
+      summary: Get overdue printing jobs
+      description: Retrieve all printing jobs that are past their delivery date
+      responses:
+        '200':
+          description: Overdue jobs found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PrintingJob'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /printing-jobs/book/{isbn}/total-copies:
+    get:
+      tags:
+        - printing-jobs
+      summary: Get total copies for book
+      description: Get the total number of copies scheduled for printing for a specific book
+      parameters:
+        - name: isbn
+          in: path
+          required: true
+          description: Book ISBN
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Total copies information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isbn:
+                    type: string
+                  total_copies:
+                    type: integer
+                  jobs_count:
+                    type: integer
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # System endpoints
+  /:
+    get:
+      tags:
+        - system
+      summary: API information
+      description: Get general API information and available endpoints
+      responses:
+        '200':
+          description: API information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIInfo'
+
+components:
+  schemas:
+    Book:
+      type: object
+      properties:
+        isbn:
+          type: string
+          description: Book ISBN
+          example: "978-0307474728"
+        titulo:
+          type: string
+          description: Book title
+          example: "Cem Anos de Solidão"
+        data_de_publicacao:
+          type: string
+          format: date
+          description: Publication date
+          example: "1967-06-05"
+        editora_id:
+          type: integer
+          description: Publisher ID
+          example: 1
+      required:
+        - isbn
+        - titulo
+        - data_de_publicacao
+        - editora_id
+
+    CreateBookRequest:
+      type: object
+      properties:
+        isbn:
+          type: string
+          description: Book ISBN
+          pattern: '^(97[89])?[\d\-]{10,17}$'
+          example: "978-0307474728"
+        titulo:
+          type: string
+          description: Book title
+          maxLength: 255
+          example: "Cem Anos de Solidão"
+        data_de_publicacao:
+          type: string
+          format: date
+          description: Publication date
+          example: "1967-06-05"
+        editora_id:
+          type: integer
+          description: Publisher ID
+          minimum: 1
+          example: 1
+      required:
+        - isbn
+        - titulo
+        - data_de_publicacao
+        - editora_id
+
+    UpdateBookRequest:
+      type: object
+      properties:
+        titulo:
+          type: string
+          description: Book title
+          maxLength: 255
+          example: "Cem Anos de Solidão - Edição Especial"
+        data_de_publicacao:
+          type: string
+          format: date
+          description: Publication date
+          example: "1967-06-05"
+        editora_id:
+          type: integer
+          description: Publisher ID
+          minimum: 1
+          example: 1
+
+    Author:
+      type: object
+      properties:
+        rg:
+          type: string
+          description: Author RG
+          example: "12345678901"
+        nome:
+          type: string
+          description: Author name
+          example: "Gabriel García Márquez"
+        endereco:
+          type: string
+          description: Author address
+          example: "América Latina"
+      required:
+        - rg
+        - nome
+        - endereco
+
+    CreateAuthorRequest:
+      type: object
+      properties:
+        rg:
+          type: string
+          description: Author RG
+          maxLength: 20
+          example: "12345678901"
+        nome:
+          type: string
+          description: Author name
+          maxLength: 255
+          example: "Gabriel García Márquez"
+        endereco:
+          type: string
+          description: Author address
+          maxLength: 255
+          example: "América Latina"
+      required:
+        - rg
+        - nome
+        - endereco
+
+    UpdateAuthorRequest:
+      type: object
+      properties:
+        nome:
+          type: string
+          description: Author name
+          maxLength: 255
+          example: "Gabriel García Márquez"
+        endereco:
+          type: string
+          description: Author address
+          maxLength: 255
+          example: "América Latina"
+
+    Publisher:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Publisher ID
+          example: 1
+        nome:
+          type: string
+          description: Publisher name
+          example: "Penguin Random House Brasil"
+        endereco:
+          type: string
+          description: Publisher address
+          example: "São Paulo, SP, Brasil"
+      required:
+        - id
+        - nome
+        - endereco
+
+    CreatePublisherRequest:
+      type: object
+      properties:
+        nome:
+          type: string
+          description: Publisher name
+          maxLength: 255
+          example: "Penguin Random House Brasil"
+        endereco:
+          type: string
+          description: Publisher address
+          maxLength: 255
+          example: "São Paulo, SP, Brasil"
+      required:
+        - nome
+        - endereco
+
+    UpdatePublisherRequest:
+      type: object
+      properties:
+        nome:
+          type: string
+          description: Publisher name
+          maxLength: 255
+          example: "Penguin Random House Brasil"
+        endereco:
+          type: string
+          description: Publisher address
+          maxLength: 255
+          example: "São Paulo, SP, Brasil"
+
+    PrintingCompany:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Printing company ID
+          example: 1
+        nome:
+          type: string
+          description: Printing company name
+          example: "PrintTech Solutions"
+        type:
+          type: string
+          enum: [particular, contratada]
+          description: Type of printing company
+          example: "contratada"
+        endereco:
+          type: string
+          description: Address (for contracted companies)
+          example: "Distrito Industrial, São Paulo, SP"
+      required:
+        - id
+        - nome
+        - type
+
+    CreatePrintingCompanyRequest:
+      type: object
+      properties:
+        nome:
+          type: string
+          description: Printing company name
+          maxLength: 255
+          example: "PrintTech Solutions"
+        type:
+          type: string
+          enum: [particular, contratada]
+          description: Type of printing company
+          example: "contratada"
+        endereco:
+          type: string
+          description: Address (required for contracted companies)
+          maxLength: 255
+          example: "Distrito Industrial, São Paulo, SP"
+      required:
+        - nome
+        - type
+
+    Contract:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Contract ID
+          example: 1
+        valor:
+          type: number
+          format: float
+          description: Contract value in currency
+          example: 15000.50
+        nome_responsavel:
+          type: string
+          description: Responsible person name
+          example: "Maria Silva"
+        grafica_cont_id:
+          type: integer
+          description: Contracted printing company ID
+          example: 1
+        created_at:
+          type: string
+          format: date-time
+          description: Contract creation date
+          example: "2024-01-15T10:00:00Z"
+      required:
+        - id
+        - valor
+        - nome_responsavel
+        - grafica_cont_id
+
+    CreateContractRequest:
+      type: object
+      properties:
+        valor:
+          type: number
+          format: float
+          description: Contract value in currency
+          minimum: 0
+          example: 15000.50
+        nome_responsavel:
+          type: string
+          description: Responsible person name
+          maxLength: 255
+          example: "Maria Silva"
+        grafica_cont_id:
+          type: integer
+          description: Contracted printing company ID
+          minimum: 1
+          example: 1
+      required:
+        - valor
+        - nome_responsavel
+        - grafica_cont_id
+
+    PrintingJob:
+      type: object
+      properties:
+        isbn:
+          type: string
+          description: Book ISBN
+          example: "978-0307474728"
+        grafica_id:
+          type: integer
+          description: Printing company ID
+          example: 1
+        nto_copias:
+          type: integer
+          description: Number of copies to print
+          example: 5000
+        data_entrega:
+          type: string
+          format: date
+          description: Expected delivery date
+          example: "2024-02-15"
+        status:
+          type: string
+          enum: [pending, in_progress, completed, overdue]
+          description: Job status (computed)
+          example: "pending"
+        days_until_delivery:
+          type: integer
+          description: Days until delivery (computed)
+          example: 30
+      required:
+        - isbn
+        - grafica_id
+        - nto_copias
+        - data_entrega
+
+    CreatePrintingJobRequest:
+      type: object
+      properties:
+        isbn:
+          type: string
+          description: Book ISBN
+          pattern: '^(97[89])?[\d\-]{10,17}$'
+          example: "978-0307474728"
+        grafica_id:
+          type: integer
+          description: Printing company ID
+          minimum: 1
+          example: 1
+        nto_copias:
+          type: integer
+          description: Number of copies to print
+          minimum: 1
+          example: 5000
+        data_entrega:
+          type: string
+          format: date
+          description: Expected delivery date
+          example: "2024-02-15"
+      required:
+        - isbn
+        - grafica_id
+        - nto_copias
+        - data_entrega
+
+    APIInfo:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Edna Bar Book Printing API"
+        version:
+          type: string
+          example: "1.0.0"
+        description:
+          type: string
+          example: "RESTful API for managing book printing operations"
+        endpoints:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              base:
+                type: string
+              operations:
+                type: array
+                items:
+                  type: string
+              description:
+                type: string
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: "Resource not found"
+        code:
+          type: string
+          description: Error code
+          example: "NOT_FOUND"
+        details:
+          type: string
+          description: Additional error details
+          example: "Book with ISBN 978-0123456789 was not found"
+        timestamp:
+          type: string
+          format: date-time
+          description: Error timestamp
+          example: "2024-01-15T10:30:00Z"
+      required:
+        - error
+        - code
+
+  responses:
+    BadRequest:
+      description: Bad request - invalid input
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Invalid input data"
+            code: "BAD_REQUEST"
+            details: "ISBN must be a valid format"
+            timestamp: "2024-01-15T10:30:00Z"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Resource not found"
+            code: "NOT_FOUND"
+            details: "Book with ISBN 978-0123456789 was not found"
+            timestamp: "2024-01-15T10:30:00Z"
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Internal server error"
+            code: "INTERNAL_ERROR"
+            details: "An unexpected error occurred"
+            timestamp: "2024-01-15T10:30:00Z"
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+# Global security (can be overridden per endpoint)
+# security:
+#   - bearerAuth: []

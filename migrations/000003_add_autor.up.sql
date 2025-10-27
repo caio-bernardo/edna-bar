@@ -1,0 +1,5 @@
+CREATE TABLE Autor (
+    RG VARCHAR(20) PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    endereco VARCHAR(255) NOT NULL
+);

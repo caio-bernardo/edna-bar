@@ -19,6 +19,7 @@ type Service interface {
 	// The keys and values in the map are service-specific.
 	Health() map[string]string
 
+	Conn() *sql.DB
 	// Close terminates the database connection.
 	// It returns an error if the connection cannot be closed.
 	Close() error
@@ -103,6 +104,10 @@ func (s *service) Health() map[string]string {
 	}
 
 	return stats
+}
+
+func (s *service) Conn() *sql.DB {
+	return s.db
 }
 
 // Close closes the database connection.

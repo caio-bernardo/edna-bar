@@ -61,4 +61,28 @@ watch:
             fi; \
         fi
 
-.PHONY: all build run test clean watch docker-run docker-down itest
+# Generate swagger documentation
+swagger:
+	@echo "Generating swagger documentation..."
+	@if command -v swag > /dev/null; then \
+		swag init -g cmd/api/main.go -o docs --parseDependency --parseInternal; \
+		echo "Swagger documentation generated in docs/"; \
+	else \
+		echo "Installing swag..."; \
+		go install github.com/swaggo/swag/cmd/swag@latest; \
+		swag init -g cmd/api/main.go -o docs --parseDependency --parseInternal; \
+		echo "Swagger documentation generated in docs/"; \
+	fi
+
+# Serve swagger UI (requires server to be running)
+swagger-ui:
+	@echo "Swagger UI available at:"
+	@echo "  http://localhost:8080/docs/"
+	@echo "  http://localhost:8080/swagger/"
+	@echo "OpenAPI spec available at:"
+	@echo "  http://localhost:8080/docs/swagger.yaml"
+
+# Build and run with swagger
+run-with-docs: swagger run
+
+.PHONY: all build run test clean watch docker-run docker-down itest swagger swagger-ui run-with-docs
