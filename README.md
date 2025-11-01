@@ -35,6 +35,11 @@ Não esqueça de acionar a base de dados antes de rodar migrações.
 
 As migrações vivem em `migrations`. Utilize o script `migrate.sh` para gerenciar migrações. Crie novas migrações com `./migrate.sh create <migration_name>`. Vá para a migração mais recente com `./migrate.sh up`, volte uma migração com `./migrate.sh down 1`. Veja mais comandos em `./migrate.sh help`.
 
+
+## Diagrama Conceitual
+
+![Diagrama Entidade-Relacionamento do Sistema EDNA bar](assets/E.D.N.A_conceitual_1.png)
+
 ## MakeFile
 
 Compile e rode os testes.
