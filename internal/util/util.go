@@ -16,7 +16,7 @@ var (
 /// Escreve uma reposta com o corpo em JSON com o status passado
 func WriteJSON(w http.ResponseWriter, status int, v any ) error {
 	w.WriteHeader(status)
-	w.Header().Add("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 
 	res, err := json.Marshal(v)
 	if err != nil {
@@ -48,7 +48,7 @@ func ErrorJSON(w http.ResponseWriter, msg string, status int) {
 	w.WriteHeader(status)
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.Header().Del("Content-Length")
-	w.Header().Add("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 
 	res, err := json.Marshal(map[string]string{"message": msg})
 	// Impossivel
