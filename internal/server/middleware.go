@@ -6,6 +6,11 @@ import (
 	"time"
 )
 
+type responseWriter struct {
+	statusCode int
+	http.ResponseWriter
+}
+
 func (s *Server) corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Set CORS headers
@@ -29,7 +34,17 @@ func (s *Server) corsMiddleware(next http.Handler) http.Handler {
 func (s *Server) logMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
 		now := time.Now()
-		next.ServeHTTP(w, r)
-		log.Printf("[%s] %s in %s", r.Method, r.URL.Path, time.Since(now))
+
+		res := responseWriter{statusCode: http.StatusOK, ResponseWriter: w}
+
+		next.ServeHTTP(&res, r)
+
+		log.Printf("[%s] %s %d %s in %s", r.Method, r.URL.Path, res.statusCode, http.StatusText(res.statusCode), time.Since(now))
 	})
+}
+
+func (w *responseWriter) WriteHeader(statusCode int) {
+	log.Printf("Sets status code: %d", statusCode)
+	w.statusCode = statusCode
+	w.ResponseWriter.WriteHeader(statusCode)
 }
