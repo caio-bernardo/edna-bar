@@ -6,7 +6,6 @@ import (
 	"edna/internal/util"
 	"encoding/json"
 	"net/http"
-	"strconv"
 )
 
 
@@ -60,13 +59,14 @@ func (h *Handler) createFornecedoresHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	var model model.Fornecedor
-	err := json.NewDecoder(r.Body).Decode(&model)
+	var payload model.FornecedorPayload
+	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		util.ErrorJSON(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
+	model := model.FromPayload(payload)
 	err = h.store.Create(ctx, &model)
 	if err != nil {
 		util.ErrorJSON(w, err.Error(), http.StatusUnprocessableEntity)
@@ -80,12 +80,7 @@ func (h *Handler) fetchFornecedorHandler(w http.ResponseWriter, r *http.Request)
 	ctx, cancel := context.WithTimeout(r.Context(), util.RequestTimeout)
 	defer cancel()
 
-	idStr := r.PathValue("id")
-	if idStr == "" {
-		util.ErrorJSON(w, "Invalid path", http.StatusBadRequest)
-		return
-	}
-	id, err := strconv.ParseInt(idStr, 10, 64)
+	id, err := util.GetIDParam(r)
 	if err != nil {
 		util.ErrorJSON(w, err.Error(), http.StatusBadRequest)
 		return
@@ -107,39 +102,25 @@ func (h *Handler) fetchFornecedorHandler(w http.ResponseWriter, r *http.Request)
 	}
 }
 
-
-type FornecedorPayload struct {
-	CPNJ string `json:"cnpj"`
-	Nome string `json:"nome"`
-}
-
 func (h *Handler) updateFornecedorHandler(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), util.RequestTimeout)
 	defer cancel()
 
-	idStr := r.PathValue("id")
-	if idStr == "" {
-		util.ErrorJSON(w, "Invalid path", http.StatusBadRequest)
-		return
-	}
-	id, err := strconv.ParseInt(idStr, 10, 64)
+	id, err := util.GetIDParam(r)
 	if err != nil {
 		util.ErrorJSON(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	var payload FornecedorPayload
+	var payload model.FornecedorPayload
 	err = json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		util.ErrorJSON(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	model := model.Fornecedor{
-		Id: id,
-		Nome: payload.Nome,
-		CNPJ: payload.CPNJ,
-	}
+	model := model.FromPayload(payload)
+	model.Id = id
 	err = h.store.Update(ctx, &model)
 	if err != nil {
 		util.ErrorJSON(w, err.Error(), http.StatusUnprocessableEntity)
@@ -153,12 +134,7 @@ func (h *Handler) deleteFornecedorHandler(w http.ResponseWriter, r *http.Request
 	ctx, cancel := context.WithTimeout(r.Context(), util.RequestTimeout)
 	defer cancel()
 
-	idStr := r.PathValue("id")
-	if idStr == "" {
-		util.ErrorJSON(w, "Invalid path", http.StatusBadRequest)
-		return
-	}
-	id, err := strconv.ParseInt(idStr, 10, 64)
+	id, err := util.GetIDParam(r)
 	if err != nil {
 		util.ErrorJSON(w, err.Error(), http.StatusBadRequest)
 		return

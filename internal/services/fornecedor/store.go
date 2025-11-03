@@ -39,16 +39,8 @@ func (s *Store) GetAll(ctx context.Context) ([]model.Fornecedor, error) {
 func (s *Store) Create(ctx context.Context, props *model.Fornecedor) error {
 	query := "INSERT INTO Fornecedor (nome, CNPJ) VALUES ($1, $2) RETURNING id_fornecedor;"
 
-	res, err := s.db.ExecContext(ctx, query, props.Nome, props.CNPJ)
-	if err != nil {
-		return err
-	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		return err
-	}
-	props.Id = id
-	return nil
+	res := s.db.QueryRowContext(ctx, query, props.Nome, props.CNPJ)
+	return res.Scan(&props.Id)
 }
 
 func (s *Store) GetByID(ctx context.Context, id int64) (*model.Fornecedor, error) {
