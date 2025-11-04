@@ -1,3 +1,4 @@
+DROP TYPE IF EXISTS tipo_de_pagamento;
 CREATE TYPE tipo_de_pagamento AS ENUM ('credito', 'debito', 'pix', 'dinheiro', 'VA/VR');
 
 CREATE TABLE IF NOT EXISTS Venda (

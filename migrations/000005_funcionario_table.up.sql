@@ -1,6 +1,8 @@
+DROP TYPE IF EXISTS tipo_de_funcionario;
 CREATE TYPE tipo_de_funcionario AS ENUM ('garcom', 'seguranca',
 'caixa', 'faxineiro', 'balconista');
 
+DROP TYPE IF EXISTS tipo_de_expediente;
 CREATE TYPE tipo_de_expediente AS ENUM ('manha', 'tarde', 'noite', 'madrugada');
 
 CREATE TABLE IF NOT EXISTS Funcionario (

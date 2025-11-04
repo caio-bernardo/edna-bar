@@ -1,3 +1,4 @@
+DROP TYPE IF EXISTS tipo_de_produto;
 CREATE TYPE tipo_de_produto AS ENUM ('estrutural', 'comercial');
 
 CREATE TABLE IF NOT EXISTS Produto (
