@@ -15,9 +15,8 @@ var (
 )
 /// Escreve uma reposta com o corpo em JSON com o status passado
 func WriteJSON(w http.ResponseWriter, status int, v any ) error {
-	w.WriteHeader(status)
 	w.Header().Set("Content-Type", "application/json")
-
+	w.WriteHeader(status)
 	res, err := json.Marshal(v)
 	if err != nil {
 		return err
@@ -45,10 +44,9 @@ func GetIDParam(r *http.Request) (int64, error) {
 
 /// Escreve uma mensagem de error com o status passado, o corpo da mensagem será em JSON
 func ErrorJSON(w http.ResponseWriter, msg string, status int) {
-	w.WriteHeader(status)
-	w.Header().Set("X-Content-Type-Options", "nosniff")
-	w.Header().Del("Content-Length")
+	w.Header().Add("X-Content-Type-Options", "nosniff")
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
 
 	res, err := json.Marshal(map[string]string{"message": msg})
 	// Impossivel
