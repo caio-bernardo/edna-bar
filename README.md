@@ -14,7 +14,7 @@ Sistema de banco de dados de Bar. Gerencie produtos, atendimentos e outras ativi
   - [ ] Funcionários
   - [ ] Vendas
   - [ ] Ofertas
-- [ ] Documentação interativa da API com Swagger UI
+- [x] Documentação interativa da API com Swagger UI
 - [ ] Frontend
 
 ## Tecnologias
