@@ -45,8 +45,11 @@ func (s *Store) GetAll(ctx context.Context, filter *util.Filter) ([]model.UnionP
 }
 
 func (s *Store) GetAllComercial(ctx context.Context, filter *util.Filter) ([]model.Comercial, error) {
-	query := "SELECT id_produto, nome, categoria, marca, preco_venda FROM ProdutoComercial c"
-	rows, err := util.QueryRowsWithFilter(s.db, ctx, query, filter, "c")
+	query := `
+		SELECT p.id_produto, p.nome, p.categoria, p.marca, c.preco_venda 
+		FROM Produto p 
+		INNER JOIN ProdutoComercial c ON p.id_produto = c.id_produto`
+	rows, err := util.QueryRowsWithFilter(s.db, ctx, query, filter, "p")
 	if err != nil {
 		return nil, err
 	}
@@ -69,9 +72,13 @@ func (s *Store) GetAllComercial(ctx context.Context, filter *util.Filter) ([]mod
 	return produtos, nil
 }
 
-
 func (s *Store) GetAllEstrutural(ctx context.Context, filter *util.Filter) ([]model.Produto, error) {
-	query := "SELECT id_produto, nome, categoria, marca FROM ONLY Produto p"
+	query := `
+		SELECT p.id_produto, p.nome, p.categoria, p.marca 
+		FROM Produto p
+		LEFT JOIN ProdutoComercial c ON p.id_produto = c.id_produto
+		WHERE c.id_produto IS NULL`
+
 	rows, err := util.QueryRowsWithFilter(s.db, ctx, query, filter, "p")
 	if err != nil {
 		return nil, err
@@ -95,17 +102,30 @@ func (s *Store) GetAllEstrutural(ctx context.Context, filter *util.Filter) ([]mo
 	return produtos, nil
 }
 
-
 func (s *Store) CreateComercial(ctx context.Context, props *model.Comercial) error {
-	// Executa uma transação (desfaz insercao em caso de erro) pois precisamos fazer 2 insercoes
-	query := "INSERT INTO ProdutoComercial (nome, categoria, marca, preco_venda) VALUES ($1, $2, $3, $4) RETURNING id_produto;"
-	row := s.db.QueryRowContext(ctx, query, props.Nome, props.Categoria, props.Marca, props.PrecoVenda)
-	// Atualiza o id do produto
-	err := row.Scan(&props.Id)
+	// Inicia a transação
+	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
 	}
-	return nil
+	defer tx.Rollback()
+
+	// Insere na tabela Produto
+	queryProduto := "INSERT INTO Produto (nome, categoria, marca) VALUES ($1, $2, $3) RETURNING id_produto;"
+	row := tx.QueryRowContext(ctx, queryProduto, props.Nome, props.Categoria, props.Marca)
+	err = row.Scan(&props.Id)
+	if err != nil {
+		return err
+	}
+
+	// Insere na tabela ProdutoComercial
+	queryComercial := "INSERT INTO ProdutoComercial (id_produto, preco_venda) VALUES ($1, $2);"
+	_, err = tx.ExecContext(ctx, queryComercial, props.Id, props.PrecoVenda)
+	if err != nil {
+		return err
+	}
+
+	return tx.Commit()
 }
 
 func (s *Store) Create(ctx context.Context, props *model.Produto) error {
@@ -119,8 +139,15 @@ func (s *Store) Create(ctx context.Context, props *model.Produto) error {
 	return nil
 }
 func (s *Store) UpdateComercial(ctx context.Context, props *model.Comercial) error {
-	query := "UPDATE ProdutoComercial SET nome = $1, categoria = $2, marca = $3, preco_venda = $4 WHERE id_produto = $5;"
-	res, err := s.db.ExecContext(ctx, query, props.Nome, props.Categoria, props.Marca, props.PrecoVenda, props.Id)
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// Atualiza a tabela Produto
+	queryProduto := "UPDATE Produto SET nome = $1, categoria = $2, marca = $3 WHERE id_produto = $4;"
+	res, err := tx.ExecContext(ctx, queryProduto, props.Nome, props.Categoria, props.Marca, props.Id)
 	if err != nil {
 		return err
 	}
@@ -131,7 +158,15 @@ func (s *Store) UpdateComercial(ctx context.Context, props *model.Comercial) err
 	if rowsAffected == 0 {
 		return types.ErrNotFound
 	}
-	return nil
+
+	// Atualiza a tabela ProdutoComercial
+	queryComercial := "UPDATE ProdutoComercial SET preco_venda = $1 WHERE id_produto = $2;"
+	_, err = tx.ExecContext(ctx, queryComercial, props.PrecoVenda, props.Id)
+	if err != nil {
+		return err
+	}
+
+	return tx.Commit()
 }
 
 func (s *Store) Update(ctx context.Context, props *model.Produto) error {
@@ -152,7 +187,12 @@ func (s *Store) Update(ctx context.Context, props *model.Produto) error {
 }
 
 func (s *Store) GetComercialByID(ctx context.Context, id int64) (*model.Comercial, error) {
-	query := "SELECT id_produto, nome, categoria, marca, preco_venda FROM ProdutoComercial WHERE id_produto = $1"
+	query := `
+		SELECT p.id_produto, p.nome, p.categoria, p.marca, c.preco_venda 
+		FROM Produto p
+		INNER JOIN ProdutoComercial c ON p.id_produto = c.id_produto
+		WHERE p.id_produto = $1`
+
 	row := s.db.QueryRowContext(ctx, query, id)
 	c := model.Comercial{}
 	err := row.Scan(&c.Id, &c.Nome, &c.Categoria, &c.Marca, &c.PrecoVenda)
