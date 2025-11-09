@@ -10,11 +10,12 @@ import (
 	"time"
 
 	"edna/internal/server"
-
 )
+
 // @title EDNA Bar System
 // @version 1.0
 // @description Aplicação de Banco de Dados para Gerenciamento de Bares
+// @BasePath /api/v1
 
 func gracefulShutdown(apiServer *http.Server, done chan bool) {
 	// Create context that listens for the interrupt signal from the OS.
@@ -51,7 +52,7 @@ func main() {
 	// Run graceful shutdown in a separate goroutine
 	go gracefulShutdown(server, done)
 
-	log.Printf("Server listening at %s", server.Addr);
+	log.Printf("Server listening at %s", server.Addr)
 	err := server.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
 		panic(fmt.Sprintf("http server error: %s", err))

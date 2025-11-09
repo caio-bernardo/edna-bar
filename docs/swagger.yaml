@@ -1,4 +1,26 @@
+basePath: /api/v1
 definitions:
+  model.Cliente:
+    properties:
+      cpf:
+        type: string
+      data_nascimento:
+        type: string
+      id:
+        type: integer
+      nome:
+        type: string
+    type: object
+  model.ClienteCreate:
+    properties:
+      cpf:
+        type: string
+      data_nascimento:
+        description: Espera-se "YYYY-MM-DD" ou formato RFC3339
+        type: string
+      nome:
+        type: string
+    type: object
   model.Comercial:
     properties:
       categoria:
@@ -38,6 +60,72 @@ definitions:
         type: string
       nome:
         type: string
+    type: object
+  model.Lote:
+    properties:
+      data_fornecimento:
+        type: string
+      estragados:
+        type: integer
+      id_fornecedor:
+        type: integer
+      id_lote:
+        type: integer
+      id_produto:
+        type: integer
+      preco_unitario:
+        type: number
+      quantidade_inicial:
+        type: integer
+      validade:
+        type: string
+    type: object
+  model.LoteCreate:
+    properties:
+      data_fornecimento:
+        type: string
+      estragados:
+        type: integer
+      id_fornecedor:
+        type: integer
+      id_produto:
+        type: integer
+      preco_unitario:
+        type: number
+      quantidade_inicial:
+        type: integer
+      validade:
+        type: string
+    type: object
+  model.Oferta:
+    properties:
+      data_criacao:
+        type: string
+      data_fim:
+        type: string
+      data_inicio:
+        type: string
+      id_oferta:
+        type: integer
+      nome:
+        type: string
+      percentual_desconto:
+        type: integer
+      valor_fixo:
+        type: number
+    type: object
+  model.OfertaCreate:
+    properties:
+      data_fim:
+        type: string
+      data_inicio:
+        type: string
+      nome:
+        type: string
+      percentual_desconto:
+        type: integer
+      valor_fixo:
+        type: number
     type: object
   model.Produto:
     properties:
@@ -98,6 +186,164 @@ paths:
       summary: Unmatched path handler
       tags:
       - Server
+  /clientes:
+    get:
+      parameters:
+      - description: 'Filter by nome using operators: like, ilike, eq, ne. Format:
+          operator.value (e.g. like.João)'
+        in: query
+        name: filter-nome
+        type: string
+      - description: 'Filter by cnpj using operators: eq, ne, like, ilike. Format:
+          operator.value (e.g. eq.123456789)'
+        in: query
+        name: filter-cnpj
+        type: string
+      - description: 'Sort fields: nome, cnpj. Prefix with ''-'' for desc. Comma separated
+          for multiple fields (e.g. -nome,cnpj)'
+        in: query
+        name: sort
+        type: string
+      - description: Pagination offset (default 0)
+        in: query
+        name: offset
+        type: integer
+      - description: Pagination limit (default 10)
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Cliente'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: List Clients
+      tags:
+      - Cliente
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Cliente payload
+        in: body
+        name: fornecedor
+        required: true
+        schema:
+          $ref: '#/definitions/model.ClienteCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Cliente'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Create Cliente
+      tags:
+      - Cliente
+  /clientes/{id}:
+    delete:
+      parameters:
+      - description: Cliente ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Cliente'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Delete Cliente
+      tags:
+      - Cliente
+    get:
+      parameters:
+      - description: Cliente ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Cliente'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Get Cliente by ID
+      tags:
+      - Cliente
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Cliente ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Cliente payload
+        in: body
+        name: fornecedor
+        required: true
+        schema:
+          $ref: '#/definitions/model.ClienteCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Cliente'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Update Cliente
+      tags:
+      - Cliente
   /fornecedores:
     get:
       parameters:
@@ -276,6 +522,322 @@ paths:
       summary: Check health of the system
       tags:
       - Server
+  /lotes:
+    get:
+      parameters:
+      - description: 'Filter by nome using operators: like, ilike, eq, ne. Format:
+          operator.value (e.g. like.João)'
+        in: query
+        name: filter-nome
+        type: string
+      - description: 'Filter by cnpj using operators: eq, ne, like, ilike. Format:
+          operator.value (e.g. eq.123456789)'
+        in: query
+        name: filter-cnpj
+        type: string
+      - description: 'Sort fields: nome, cnpj. Prefix with ''-'' for desc. Comma separated
+          for multiple fields (e.g. -nome,cnpj)'
+        in: query
+        name: sort
+        type: string
+      - description: Pagination offset (default 0)
+        in: query
+        name: offset
+        type: integer
+      - description: Pagination limit (default 10)
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Lote'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: List Lotes
+      tags:
+      - Lote
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Lote payload
+        in: body
+        name: fornecedor
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoteCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Lote'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Create Lote
+      tags:
+      - Lote
+  /lotes/{id}:
+    delete:
+      parameters:
+      - description: Lote ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Lote'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Delete Lote
+      tags:
+      - Lote
+    get:
+      parameters:
+      - description: Lote ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Lote'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Get Lote by ID
+      tags:
+      - Lote
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Lote ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Lote payload
+        in: body
+        name: fornecedor
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoteCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Lote'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Update Lote
+      tags:
+      - Lote
+  /ofertas:
+    get:
+      parameters:
+      - description: 'Filter by nome using operators: like, ilike, eq, ne. Format:
+          operator.value (e.g. like.João)'
+        in: query
+        name: filter-nome
+        type: string
+      - description: 'Filter by cnpj using operators: eq, ne, like, ilike. Format:
+          operator.value (e.g. eq.123456789)'
+        in: query
+        name: filter-cnpj
+        type: string
+      - description: 'Sort fields: nome, cnpj. Prefix with ''-'' for desc. Comma separated
+          for multiple fields (e.g. -nome,cnpj)'
+        in: query
+        name: sort
+        type: string
+      - description: Pagination offset (default 0)
+        in: query
+        name: offset
+        type: integer
+      - description: Pagination limit (default 10)
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Oferta'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: List Ofertas
+      tags:
+      - Oferta
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Oferta payload
+        in: body
+        name: fornecedor
+        required: true
+        schema:
+          $ref: '#/definitions/model.OfertaCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Oferta'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Create Oferta
+      tags:
+      - Oferta
+  /ofertas/{id}:
+    delete:
+      parameters:
+      - description: Oferta ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Oferta'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Delete Oferta
+      tags:
+      - Oferta
+    get:
+      parameters:
+      - description: Oferta ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Oferta'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Get Oferta by ID
+      tags:
+      - Oferta
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Oferta ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Oferta payload
+        in: body
+        name: fornecedor
+        required: true
+        schema:
+          $ref: '#/definitions/model.OfertaCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Oferta'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Update Oferta
+      tags:
+      - Oferta
   /produtos:
     get:
       parameters:

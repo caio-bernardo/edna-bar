@@ -10,16 +10,22 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 
 	"edna/internal/database"
+	"edna/internal/services/cliente"
 	"edna/internal/services/fornecedor"
+	"edna/internal/services/lote"
+	"edna/internal/services/oferta"
 	"edna/internal/services/produto"
 )
 
 type Server struct {
 	port int
 
-	db database.Service
+	db              database.Service
 	fornecedorStore *fornecedor.Store
-	produtoStore *produto.Store
+	produtoStore    *produto.Store
+	clienteStore    *cliente.Store
+	loteStore       *lote.Store
+	ofertaStore     *oferta.Store
 }
 
 func NewServer() *http.Server {
@@ -28,9 +34,12 @@ func NewServer() *http.Server {
 	NewServer := &Server{
 		port: port,
 
-		db: db,
+		db:              db,
 		fornecedorStore: fornecedor.NewStore(db.Conn()),
-		produtoStore: produto.NewStore(db.Conn()),
+		produtoStore:    produto.NewStore(db.Conn()),
+		clienteStore:    cliente.NewStore(db.Conn()),
+		loteStore:       lote.NewStore(db.Conn()),
+		ofertaStore:     oferta.NewStore(db.Conn()),
 	}
 
 	// Declare Server config

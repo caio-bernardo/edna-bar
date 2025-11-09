@@ -12,7 +12,7 @@ import (
 type FilterMap map[string]FilterItem
 
 type FilterItem struct {
-	Value any
+	Value    any
 	Operator string `enum:"lt,gt,eq,ge,le,ne,like,ilike"`
 }
 
@@ -22,9 +22,9 @@ type IntoQuery interface {
 
 type Filter struct {
 	Filters FilterMap
-	Sorts []string
-	Offset uint32
-	Limit uint32
+	Sorts   []string
+	Offset  uint32
+	Limit   uint32
 }
 
 func (ff *Filter) GetLimit(params url.Values) error {
@@ -72,7 +72,7 @@ func (ff *Filter) GetFilterStr(params url.Values, key string) error {
 	filterKey := fmt.Sprintf("filter-%s", key)
 
 	if params.Get(filterKey) != "" {
-		parts := strings.Split(params.Get(filterKey),".")
+		parts := strings.Split(params.Get(filterKey), ".")
 		if len(parts) != 2 {
 			return errors.New("Invalid query param `filter[nome]`")
 		}
@@ -81,7 +81,7 @@ func (ff *Filter) GetFilterStr(params url.Values, key string) error {
 		}
 		ff.Filters[key] = FilterItem{
 			Operator: parts[0],
-			Value: parts[1],
+			Value:    parts[1],
 		}
 	}
 	return nil
@@ -91,7 +91,7 @@ func (ff *Filter) GetFilterInt(params url.Values, key string) error {
 	filterKey := fmt.Sprintf("filter-%s", key)
 
 	if params.Get(filterKey) != "" {
-		parts := strings.Split(params.Get(filterKey),".")
+		parts := strings.Split(params.Get(filterKey), ".")
 		if len(parts) != 2 {
 			return errors.New("Invalid query param `filter[nome]`")
 		}
@@ -105,7 +105,7 @@ func (ff *Filter) GetFilterInt(params url.Values, key string) error {
 		}
 		ff.Filters[key] = FilterItem{
 			Operator: parts[0],
-			Value: v,
+			Value:    v,
 		}
 	}
 	return nil
@@ -115,7 +115,7 @@ func (ff *Filter) GetFilterFloat(params url.Values, key string) error {
 	filterKey := fmt.Sprintf("filter-%s", key)
 
 	if params.Get(filterKey) != "" {
-		parts := strings.Split(params.Get(filterKey),".")
+		parts := strings.Split(params.Get(filterKey), ".")
 		if len(parts) != 2 {
 			return errors.New("Invalid query param `filter[nome]`")
 		}
@@ -129,14 +129,14 @@ func (ff *Filter) GetFilterFloat(params url.Values, key string) error {
 		}
 		ff.Filters[key] = FilterItem{
 			Operator: parts[0],
-			Value: v,
+			Value:    v,
 		}
 	}
 	return nil
 }
 
 // Cria uma sql query apartir de Filter e adiciona valores para preencher a query em values
-func (ff *Filter) ToQuery(values *[]any, tableAlias string) (string) {
+func (ff *Filter) ToQuery(values *[]any, tableAlias string) string {
 	// condições
 	var query string
 	i := 0
@@ -201,7 +201,6 @@ func (ff *Filter) ToQuery(values *[]any, tableAlias string) (string) {
 		*values = append(*values, ff.Limit)
 		query += " LIMIT $" + strconv.Itoa(len(*values))
 	}
-	fmt.Println(query)
 	return query
 }
 

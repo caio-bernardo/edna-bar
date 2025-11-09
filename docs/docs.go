@@ -38,6 +38,243 @@ const docTemplate = `{
                 }
             }
         },
+        "/clientes": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cliente"
+                ],
+                "summary": "List Clients",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter by nome using operators: like, ilike, eq, ne. Format: operator.value (e.g. like.João)",
+                        "name": "filter-nome",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by cnpj using operators: eq, ne, like, ilike. Format: operator.value (e.g. eq.123456789)",
+                        "name": "filter-cnpj",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort fields: nome, cnpj. Prefix with '-' for desc. Comma separated for multiple fields (e.g. -nome,cnpj)",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Pagination offset (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Pagination limit (default 10)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Cliente"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cliente"
+                ],
+                "summary": "Create Cliente",
+                "parameters": [
+                    {
+                        "description": "Cliente payload",
+                        "name": "fornecedor",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ClienteCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Cliente"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/clientes/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cliente"
+                ],
+                "summary": "Get Cliente by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Cliente ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Cliente"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cliente"
+                ],
+                "summary": "Update Cliente",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Cliente ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Cliente payload",
+                        "name": "fornecedor",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ClienteCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Cliente"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cliente"
+                ],
+                "summary": "Delete Cliente",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Cliente ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Cliente"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/fornecedores": {
             "get": {
                 "produces": [
@@ -300,6 +537,480 @@ const docTemplate = `{
                             "additionalProperties": {
                                 "type": "string"
                             }
+                        }
+                    }
+                }
+            }
+        },
+        "/lotes": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lote"
+                ],
+                "summary": "List Lotes",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter by nome using operators: like, ilike, eq, ne. Format: operator.value (e.g. like.João)",
+                        "name": "filter-nome",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by cnpj using operators: eq, ne, like, ilike. Format: operator.value (e.g. eq.123456789)",
+                        "name": "filter-cnpj",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort fields: nome, cnpj. Prefix with '-' for desc. Comma separated for multiple fields (e.g. -nome,cnpj)",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Pagination offset (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Pagination limit (default 10)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Lote"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lote"
+                ],
+                "summary": "Create Lote",
+                "parameters": [
+                    {
+                        "description": "Lote payload",
+                        "name": "fornecedor",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.LoteCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Lote"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/lotes/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lote"
+                ],
+                "summary": "Get Lote by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Lote ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Lote"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lote"
+                ],
+                "summary": "Update Lote",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Lote ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Lote payload",
+                        "name": "fornecedor",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.LoteCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Lote"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lote"
+                ],
+                "summary": "Delete Lote",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Lote ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Lote"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/ofertas": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Oferta"
+                ],
+                "summary": "List Ofertas",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter by nome using operators: like, ilike, eq, ne. Format: operator.value (e.g. like.João)",
+                        "name": "filter-nome",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by cnpj using operators: eq, ne, like, ilike. Format: operator.value (e.g. eq.123456789)",
+                        "name": "filter-cnpj",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort fields: nome, cnpj. Prefix with '-' for desc. Comma separated for multiple fields (e.g. -nome,cnpj)",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Pagination offset (default 0)",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Pagination limit (default 10)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Oferta"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Oferta"
+                ],
+                "summary": "Create Oferta",
+                "parameters": [
+                    {
+                        "description": "Oferta payload",
+                        "name": "fornecedor",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.OfertaCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Oferta"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/ofertas/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Oferta"
+                ],
+                "summary": "Get Oferta by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Oferta ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Oferta"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Oferta"
+                ],
+                "summary": "Update Oferta",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Oferta ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Oferta payload",
+                        "name": "fornecedor",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.OfertaCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Oferta"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Oferta"
+                ],
+                "summary": "Delete Oferta",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Oferta ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Oferta"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
@@ -818,6 +1529,38 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "model.Cliente": {
+            "type": "object",
+            "properties": {
+                "cpf": {
+                    "type": "string"
+                },
+                "data_nascimento": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "nome": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ClienteCreate": {
+            "type": "object",
+            "properties": {
+                "cpf": {
+                    "type": "string"
+                },
+                "data_nascimento": {
+                    "description": "Espera-se \"YYYY-MM-DD\" ou formato RFC3339",
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                }
+            }
+        },
         "model.Comercial": {
             "type": "object",
             "properties": {
@@ -877,6 +1620,107 @@ const docTemplate = `{
                 },
                 "nome": {
                     "type": "string"
+                }
+            }
+        },
+        "model.Lote": {
+            "type": "object",
+            "properties": {
+                "data_fornecimento": {
+                    "type": "string"
+                },
+                "estragados": {
+                    "type": "integer"
+                },
+                "id_fornecedor": {
+                    "type": "integer"
+                },
+                "id_lote": {
+                    "type": "integer"
+                },
+                "id_produto": {
+                    "type": "integer"
+                },
+                "preco_unitario": {
+                    "type": "number"
+                },
+                "quantidade_inicial": {
+                    "type": "integer"
+                },
+                "validade": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.LoteCreate": {
+            "type": "object",
+            "properties": {
+                "data_fornecimento": {
+                    "type": "string"
+                },
+                "estragados": {
+                    "type": "integer"
+                },
+                "id_fornecedor": {
+                    "type": "integer"
+                },
+                "id_produto": {
+                    "type": "integer"
+                },
+                "preco_unitario": {
+                    "type": "number"
+                },
+                "quantidade_inicial": {
+                    "type": "integer"
+                },
+                "validade": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Oferta": {
+            "type": "object",
+            "properties": {
+                "data_criacao": {
+                    "type": "string"
+                },
+                "data_fim": {
+                    "type": "string"
+                },
+                "data_inicio": {
+                    "type": "string"
+                },
+                "id_oferta": {
+                    "type": "integer"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "percentual_desconto": {
+                    "type": "integer"
+                },
+                "valor_fixo": {
+                    "type": "number"
+                }
+            }
+        },
+        "model.OfertaCreate": {
+            "type": "object",
+            "properties": {
+                "data_fim": {
+                    "type": "string"
+                },
+                "data_inicio": {
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "percentual_desconto": {
+                    "type": "integer"
+                },
+                "valor_fixo": {
+                    "type": "number"
                 }
             }
         },
@@ -946,7 +1790,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "",
-	BasePath:         "",
+	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "EDNA Bar System",
 	Description:      "Aplicação de Banco de Dados para Gerenciamento de Bares",
