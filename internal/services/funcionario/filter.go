@@ -22,10 +22,15 @@ func NewFuncionarioFilter(params url.Values) (util.Filter, error) {
 		return filter, err
 	}
 
-	for _, attr := range attrs {
+	for _, attr := range []string{"salario", "expediente", "tipo", "CPF", "nome", "id_funcionario"} {
 		if err := filter.GetFilterStr(params, attr); err != nil {
 			return filter, err
 		}
 	}
+
+	if err := filter.GetFilterTime(params, "data_contratacao"); err != nil {
+		return filter, err
+	}
+
 	return filter, nil
 }

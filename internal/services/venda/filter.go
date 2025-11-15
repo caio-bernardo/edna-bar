@@ -15,7 +15,7 @@ func NewVendaFilter(params url.Values) (util.Filter, error) {
 		return filter, err
 	}
 
-	attrs := []string{"data_hora_venda", "data_hora_pagamento", "tipo_pagamento"}
+	attrs := []string{"data_hora_venda", "data_hora_pagamento", "tipo_pagamento", "id_cliente", "id_funcionario"}
 
 	if err := filter.GetSorts(params, attrs); err != nil {
 		return filter, err

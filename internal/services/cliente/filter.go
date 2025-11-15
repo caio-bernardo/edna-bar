@@ -16,7 +16,7 @@ func NewClienteFilter(params url.Values) (util.Filter, error) {
 		return filter, err
 	}
 
-	attrs := []string{"nome", "cpf"}
+	attrs := []string{"nome", "cpf", "data_nascimento"}
 	if err := filter.GetSorts(params, attrs); err != nil {
 		return filter, err
 	}
@@ -27,6 +27,11 @@ func NewClienteFilter(params url.Values) (util.Filter, error) {
 	}
 	// Filtro de string (like, ilike, eq, ne)
 	if err := filter.GetFilterStr(params, "cpf"); err != nil {
+		return filter, err
+	}
+
+	// Filtro tempo (eq, neq, gt, lt, ...)
+	if err := filter.GetFilterTime(params, "data_nascimento"); err != nil {
 		return filter, err
 	}
 

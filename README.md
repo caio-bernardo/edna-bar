@@ -6,7 +6,7 @@ Sistema de banco de dados de Bar. Gerencie produtos, atendimentos e outras ativi
 
 ## Funcionalidades
 
-1. [ ]  Gerenciar o estoque, atualizando o status dos itens entre os estados "disponível", "armazenado" e "vencido".
+1. [x]  Gerenciar o estoque, atualizando o status dos itens, seus preços e disponibilidade.
 2. [ ] Gerar e recuperar relatórios de estoque que mostrem a proporção de itens consumíveis versus descartáveis.
 3. [ ] Buscar e filtrar itens do estoque por critérios como tipo, data de validade e fornecedor.
 4. [ ] Registrar, consultar e atualizar transações de venda, gastos e cobranças.

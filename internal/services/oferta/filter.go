@@ -28,7 +28,13 @@ func NewOfertaFilter(params url.Values) (util.Filter, error) {
 	if err := filter.GetFilterInt(params, "percentual_desconto"); err != nil {
 		return filter, err
 	}
-	// Filtros para datas (data_inicio, data_fim) podem ser adicionados
-	// como GetFilterStr, mas o ideal seria ter um GetFilterDate no util.Filter
+
+	if err := filter.GetFilterTime(params, "data_inicio"); err != nil {
+		return filter, err
+	}
+	if err := filter.GetFilterTime(params, "data_fim"); err != nil {
+		return filter, err
+	}
+
 	return filter, nil
 }
