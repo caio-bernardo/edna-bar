@@ -51,6 +51,28 @@ func (s *Store) GetByID(ctx context.Context, id int64) (*model.Cliente, error) {
 	return &c, nil
 }
 
+func (s *Store) GetByIDWithSaldo(ctx context.Context, id int64) (*model.ClienteWithSaldo, error) {
+	query := `
+		SELECT c.id_cliente, nome, CPF, data_nascimento,
+			COALESCE(SUM(iv.quantidade * iv.valor_unitario), 0)::decimal(12, 2) AS saldo_devedor
+			FROM Cliente AS c LEFT JOIN Venda AS v USING (id_cliente)
+			JOIN item_venda iv USING (id_venda)
+			WHERE c.id_cliente = $1 AND v.data_hora_pagamento IS NULL
+		 GROUP BY c.id_cliente;
+	`
+	row := s.db.QueryRowContext(ctx, query, id)
+
+	var c model.ClienteWithSaldo
+	err := row.Scan(&c.Id, &c.Nome, &c.CPF, &c.DataNascimento, &c.SaldoDevedor)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, types.ErrNotFound
+		}
+		return nil, err
+	}
+	return &c, nil
+}
+
 func (s *Store) Create(ctx context.Context, props *model.Cliente) error {
 	query := "INSERT INTO Cliente (nome, cpf, data_nascimento) VALUES ($1, $2, $3) RETURNING id_cliente;"
 	res := s.db.QueryRowContext(ctx, query, props.Nome, props.CPF, props.DataNascimento)

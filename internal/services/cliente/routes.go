@@ -17,6 +17,7 @@ type ClienteStore interface {
 	GetAll(ctx context.Context, filter util.Filter) ([]model.Cliente, error)
 	Create(ctx context.Context, props *model.Cliente) error
 	GetByID(ctx context.Context, id int64) (*model.Cliente, error)
+	GetByIDWithSaldo(ctx context.Context, id int64) (*model.ClienteWithSaldo, error)
 	Update(ctx context.Context, props *model.Cliente) error
 	Delete(ctx context.Context, id int64) (*model.Cliente, error)
 }
@@ -29,6 +30,7 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("GET /clientes", h.getAll)
 	mux.HandleFunc("POST /clientes", h.create)
 	mux.HandleFunc("GET /clientes/{id}", h.fetch)
+	mux.HandleFunc("GET /clientes/{id}/saldo", h.fetchSaldo)
 	mux.HandleFunc("PUT /clientes/{id}", h.update)
 	mux.HandleFunc("DELETE /clientes/{id}", h.delete)
 }
@@ -164,6 +166,38 @@ func (h *Handler) update(w http.ResponseWriter, r *http.Request) {
 	model := payload.ToCliente()
 	model.Id = id
 	err = h.store.Update(ctx, &model)
+	if err != nil {
+		if err == types.ErrNotFound {
+			util.ErrorJSON(w, "Cliente not found.", http.StatusNotFound)
+			return
+		}
+		util.ErrorJSON(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+
+	util.WriteJSON(w, http.StatusOK, model)
+}
+
+
+// @Summary Fetch Client's Balance
+// // @Tags Cliente
+// @Produce json
+// @Param id path int true "Cliente ID"
+// @Success 200 {object} model.ClienteWithSaldo
+// @Failure 400 {object} types.ErrorResponse
+// @Failure 422 {object} types.ErrorResponse
+// @Router /clientes/{id}/saldo [get]
+func (h *Handler) fetchSaldo(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(r.Context(), util.RequestTimeout)
+	defer cancel()
+
+	id, err := util.GetIDParam(r)
+	if err != nil {
+		util.ErrorJSON(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	model, err := h.store.GetByIDWithSaldo(ctx, id)
 	if err != nil {
 		if err == types.ErrNotFound {
 			util.ErrorJSON(w, "Cliente not found.", http.StatusNotFound)

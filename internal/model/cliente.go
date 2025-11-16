@@ -11,6 +11,18 @@ type Cliente struct {
 	DataNascimento *time.Time `json:"data_nascimento"`
 }
 
+type ClienteWithSaldo struct {
+	Cliente
+	SaldoDevedor float32 `json:"saldo_devedor"`
+}
+
+func (c *Cliente) ToClienteWithSaldo(saldo float32) ClienteWithSaldo {
+	return ClienteWithSaldo{
+		Cliente: *c,
+		SaldoDevedor:   saldo,
+	}
+}
+
 type ClienteCreate struct {
 	Nome           string     `json:"nome"`
 	CPF            *string    `json:"cpf"`
