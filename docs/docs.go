@@ -1823,8 +1823,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "integer",
-                            "format": "int64"
+                            "$ref": "#/definitions/model.ProdutoWithQnt"
                         }
                     },
                     "400": {
@@ -2385,6 +2384,26 @@ const docTemplate = `{
                 },
                 "nome": {
                     "type": "string"
+                }
+            }
+        },
+        "model.ProdutoWithQnt": {
+            "type": "object",
+            "properties": {
+                "categoria": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "marca": {
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "quantidade_disponível": {
+                    "type": "integer"
                 }
             }
         },

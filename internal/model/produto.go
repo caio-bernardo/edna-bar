@@ -44,3 +44,15 @@ func (cc ComercialCreate) ToComercial() Comercial {
 		PrecoVenda: cc.PrecoVenda,
 	}
 }
+
+type ProdutoWithQnt struct {
+	Produto
+	Qnt uint64 `json:"quantidade_disponível"`
+}
+
+func (p *Produto) NewProdutoWithQnt(qnt uint64) ProdutoWithQnt {
+	return ProdutoWithQnt{
+		Produto: *p,
+		Qnt: qnt,
+	}
+}

@@ -192,6 +192,19 @@ definitions:
       nome:
         type: string
     type: object
+  model.ProdutoWithQnt:
+    properties:
+      categoria:
+        type: string
+      id:
+        type: integer
+      marca:
+        type: string
+      nome:
+        type: string
+      quantidade_disponível:
+        type: integer
+    type: object
   model.UnionProduto:
     properties:
       categoria:
@@ -1268,8 +1281,7 @@ paths:
         "200":
           description: OK
           schema:
-            format: int64
-            type: integer
+            $ref: '#/definitions/model.ProdutoWithQnt'
         "400":
           description: Bad Request
           schema:

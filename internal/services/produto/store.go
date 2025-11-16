@@ -222,25 +222,29 @@ func (s *Store) GetByID(ctx context.Context, id int64) (*model.Produto, error) {
 	return &c, nil
 }
 
-func (s *Store) GetQntByID(ctx context.Context, id int64) (uint64, error) {
+func (s *Store) GetQntByID(ctx context.Context, id int64) (*model.ProdutoWithQnt, error) {
 
 	// Quantidade de produtos disponiveis
 	// Resultado = inicias - estrados - vendidos
 	// coalesce converte o null da soma em zero.
+	// Assim possiveis valores nulos resultam em zero
 	query := `
-	SELECT (SUM(quantidade_inicial) - SUM(estragados) - COALESCE(SUM(quantidade), 0)) AS quantidade_disponivel
-		FROM lote LEFT JOIN item_venda USING (id_lote)
-		GROUP BY id_produto
-		WHERE id_produto = $1;`
+	SELECT p.id_produto, p.nome, p.categoria, p.marca,
+		COALESCE(SUM(quantidade_inicial) - SUM(estragados), 0) - COALESCE(SUM(quantidade), 0) AS quantidade_disponivel
+		FROM Produto p
+		LEFT JOIN lote USING (id_produto)
+	 	LEFT JOIN item_venda USING (id_lote)
+		WHERE p.id_produto = $1
+		GROUP BY p.id_produto;`
 
 	row := s.db.QueryRowContext(ctx, query, id)
 
-	var qnt uint64
-	err := row.Scan(&qnt)
+	var model model.ProdutoWithQnt
+	err := row.Scan(&model.Id, &model.Nome, &model.Categoria, &model.Marca, &model.Qnt)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
-	return qnt, nil
+	return &model, nil
 }
 
 func (s *Store) Delete(ctx context.Context, id int64) error {
