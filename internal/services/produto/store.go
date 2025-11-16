@@ -46,8 +46,8 @@ func (s *Store) GetAll(ctx context.Context, filter *util.Filter) ([]model.UnionP
 
 func (s *Store) GetAllComercial(ctx context.Context, filter *util.Filter) ([]model.Comercial, error) {
 	query := `
-		SELECT p.id_produto, p.nome, p.categoria, p.marca, c.preco_venda 
-		FROM Produto p 
+		SELECT p.id_produto, p.nome, p.categoria, p.marca, c.preco_venda
+		FROM Produto p
 		INNER JOIN ProdutoComercial c ON p.id_produto = c.id_produto`
 	rows, err := util.QueryRowsWithFilter(s.db, ctx, query, filter, "p")
 	if err != nil {
@@ -74,7 +74,7 @@ func (s *Store) GetAllComercial(ctx context.Context, filter *util.Filter) ([]mod
 
 func (s *Store) GetAllEstrutural(ctx context.Context, filter *util.Filter) ([]model.Produto, error) {
 	query := `
-		SELECT p.id_produto, p.nome, p.categoria, p.marca 
+		SELECT p.id_produto, p.nome, p.categoria, p.marca
 		FROM Produto p
 		LEFT JOIN ProdutoComercial c ON p.id_produto = c.id_produto
 		WHERE c.id_produto IS NULL`
@@ -188,7 +188,7 @@ func (s *Store) Update(ctx context.Context, props *model.Produto) error {
 
 func (s *Store) GetComercialByID(ctx context.Context, id int64) (*model.Comercial, error) {
 	query := `
-		SELECT p.id_produto, p.nome, p.categoria, p.marca, c.preco_venda 
+		SELECT p.id_produto, p.nome, p.categoria, p.marca, c.preco_venda
 		FROM Produto p
 		INNER JOIN ProdutoComercial c ON p.id_produto = c.id_produto
 		WHERE p.id_produto = $1`
@@ -220,6 +220,27 @@ func (s *Store) GetByID(ctx context.Context, id int64) (*model.Produto, error) {
 		return nil, err
 	}
 	return &c, nil
+}
+
+func (s *Store) GetQntByID(ctx context.Context, id int64) (uint64, error) {
+
+	// Quantidade de produtos disponiveis
+	// Resultado = inicias - estrados - vendidos
+	// coalesce converte o null da soma em zero.
+	query := `
+	SELECT (SUM(quantidade_inicial) - SUM(estragados) - COALESCE(SUM(quantidade), 0)) AS quantidade_disponivel
+		FROM lote LEFT JOIN item_venda USING (id_lote)
+		GROUP BY id_produto
+		WHERE id_produto = $1;`
+
+	row := s.db.QueryRowContext(ctx, query, id)
+
+	var qnt uint64
+	err := row.Scan(&qnt)
+	if err != nil {
+		return 0, err
+	}
+	return qnt, nil
 }
 
 func (s *Store) Delete(ctx context.Context, id int64) error {

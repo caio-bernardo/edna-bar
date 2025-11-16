@@ -22,6 +22,7 @@ type ProdutoStore interface {
 	Update(ctx context.Context, props *model.Produto) error
 	GetComercialByID(ctx context.Context, id int64) (*model.Comercial, error)
 	GetByID(ctx context.Context, id int64) (*model.Produto, error)
+	GetQntByID(ctx context.Context, id int64) (uint64, error)
 	Delete(ctx context.Context, id int64) error
 }
 
@@ -41,6 +42,8 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("POST /produtos/comercial", h.createComercialHandler)
 	mux.HandleFunc("GET /produtos/comercial/{id}", h.getComercialHandler)
 	mux.HandleFunc("PUT /produtos/comercial/{id}", h.updateComercialHandler)
+
+	mux.HandleFunc("GET /produtos/{id}/quantidades", h.getQuantidadeHandler)
 }
 
  // @Summary List Produtos (all types)
@@ -363,4 +366,33 @@ func (h *Handler) deleteProdutoHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+// @Summary Get Produto Quantidade
+// @Tags Produtos
+// @Produce json
+// @Param id path int true "Produto ID"
+// @Success 200 {object} uint64
+// @Failure 400 {object} types.ErrorResponse
+// @Failure 500 {object} types.ErrorResponse
+// @Router /produtos/{id}/quantidades [get]
+func (h *Handler) getQuantidadeHandler(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(r.Context(), util.RequestTimeout)
+	defer cancel()
+
+	id, err := util.GetIDParam(r)
+	if err != nil {
+		util.ErrorJSON(w, "Invalid ID parameter", http.StatusBadRequest)
+		return
+	}
+
+	qnt, err := h.store.GetQntByID(ctx, id)
+	if err != nil {
+		util.ErrorJSON(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := util.WriteJSON(w, http.StatusOK, qnt); err != nil {
+		util.ErrorJSON(w, err.Error(), http.StatusUnprocessableEntity)
+	}
 }
