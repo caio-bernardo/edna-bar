@@ -6,21 +6,25 @@ Sistema de banco de dados de Bar. Gerencie produtos, atendimentos e outras ativi
 
 ## Funcionalidades
 
-1. [x]  Gerenciar o estoque, atualizando o status dos itens, seus preços e disponibilidade.
-2. [ ] Gerar e recuperar relatórios de estoque que mostrem a proporção de itens consumíveis versus descartáveis.
-3. [ ] Buscar e filtrar itens do estoque por critérios como tipo, data de validade e fornecedor.
-4. [ ] Registrar, consultar e atualizar transações de venda, gastos e cobranças.
-5. [ ]  Gerenciar o cadastro e o saldo devedor dos clientes.
-6. [ ] Registrar e consultar gastos operacionais com recursos não comerciais, como utensílios e mobília.
-7. [ ] Gerar e recuperar relatórios financeiros que apresentem ganhos, gastos e projeções para um período arbitrário.
-8. [ ] Gerenciar (CRUD) o cadastro de funcionários, atribuindo cargos e níveis de acesso.
-9. [ ] Consultar e atualizar os dados de pagamento, salários e bonificações de um funcionário específico.
-10. [ ]  Gerar e recuperar relatórios de folha de pagamento para uma categoria de funcionários ou para a equipe inteira.
-11. [ ] Gerar e recuperar previsões de vendas com base em fatores como dia da semana e datas comemorativas.
-12. [ ] Consultar o histórico de vendas para alimentar o modelo de previsão.
-13. [ ] Gerenciar (CRUD) a criação de regras de desconto e combos promocionais.
-14. [ ] Aplicar automaticamente descontos e promoções válidos ao calcular o preço de um pedido.
-15. [ ] Buscar e filtrar promoções por critérios como popularidade, lucratividade e data de criação.
+1. Gerenciar o estoque, atualizando o status dos itens, seus preços e disponibilidade.
+2. Buscar e filtrar itens do estoque por critérios como tipo, data de validade e fornecedor.
+3. Registrar, consultar e atualizar transações de venda, gastos e cobranças.
+4. Gerenciar o cadastro e o saldo devedor dos clientes.
+5. Registrar e consultar gastos operacionais com recursos não comerciais, como utensílios e mobília.
+6. Gerar e recuperar relatórios financeiros que apresentem ganhos, gastos e projeções para um período arbitrário.
+7. Gerenciar (CRUD) o cadastro de funcionários, atribuindo cargos e outros valores.
+8. Consultar e atualizar os dados de pagamento, salários e bonificações de um funcionário específico.
+9. Gerar e recuperar relatórios de folha de pagamento para uma categoria de funcionários ou para a equipe inteira.
+10. Gerenciar (CRUD) a criação de regras de desconto e combos promocionais.
+11. Buscar e filtrar promoções por critérios como popularidade, lucratividade e data de criação.
+
+## Tasks
+- [ ] Implementar rotas e store de item_venda
+- [ ] Implementar aplica oferta
+- [x] Visualizar saldo devedor do cliente
+- [ ] Criar visualização de despesas (ver gastos e vendas) (financeiro/despesas)
+- [ ] Criar relatórios financeiros (financeiro/relatorio)
+- [ ] Filtrar ofertas por popularidade, lucratividade (criar filtros)
 
 ## Tecnologias Utilizadas
 
