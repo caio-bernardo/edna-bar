@@ -37,3 +37,20 @@ func NewClienteFilter(params url.Values) (util.Filter, error) {
 
 	return filter, nil
 }
+
+func NewClienteWithSaldoFilter(params url.Values) (util.Filter, error) {
+	filter, err := NewClienteFilter(params)
+	if err != nil {
+		return filter, err
+	}
+
+	if err := filter.GetSorts(params, []string{"saldo_devedor"}); err != nil {
+		return filter, err
+	}
+
+	if err := filter.GetFilterFloat(params, "saldo_devedor"); err != nil {
+		return filter, err
+	}
+
+	return filter, nil
+}

@@ -23,8 +23,6 @@ Sistema de banco de dados de Bar. Gerencie produtos, atendimentos e outras ativi
 - [ ] Implementar aplica oferta
 - [x] Visualizar saldo devedor do cliente
 - [ ] Criar visualização de despesas (ver gastos e vendas) (financeiro/despesas)
-- [ ] Criar relatórios financeiros (financeiro/relatorio)
-- [ ] Filtrar ofertas por popularidade, lucratividade (criar filtros)
 
 ## Tecnologias Utilizadas
 

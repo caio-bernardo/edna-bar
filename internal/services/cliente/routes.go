@@ -15,6 +15,7 @@ type Handler struct {
 
 type ClienteStore interface {
 	GetAll(ctx context.Context, filter util.Filter) ([]model.Cliente, error)
+	GetAllWithSaldo(ctx context.Context, filter util.Filter) ([]model.ClienteWithSaldo, error)
 	Create(ctx context.Context, props *model.Cliente) error
 	GetByID(ctx context.Context, id int64) (*model.Cliente, error)
 	GetByIDWithSaldo(ctx context.Context, id int64) (*model.ClienteWithSaldo, error)
@@ -28,6 +29,7 @@ func NewHandler(store ClienteStore) *Handler {
 
 func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("GET /clientes", h.getAll)
+	mux.HandleFunc("GET /clientes/saldo", h.getAllWithSaldo)
 	mux.HandleFunc("POST /clientes", h.create)
 	mux.HandleFunc("GET /clientes/{id}", h.fetch)
 	mux.HandleFunc("GET /clientes/{id}/saldo", h.fetchSaldo)
@@ -56,6 +58,38 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	clientes, err := h.store.GetAll(ctx, filters)
+	if err != nil {
+		util.ErrorJSON(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = util.WriteJSON(w, http.StatusOK, clientes)
+	if err != nil {
+		util.ErrorJSON(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+// @Summary List Clients
+// @Tags Cliente
+// @Produce json
+// @Param filter-nome query string false "Filter by nome using operators: like, ilike, eq, ne. Format: operator.value (e.g. like.João)"
+// @Param filter-cnpj query string false "Filter by cnpj using operators: eq, ne, like, ilike. Format: operator.value (e.g. eq.123456789)"
+// @Param filter-saldo_devedor query float32 false "Filter by saldo_devedor using operators: eq, ne, gt, lt, gte, lte. Format: operator.value (e.g. eq.100)"
+// @Param sort query string false "Sort fields: nome, cnpj, saldo_devedor. Prefix with '-' for desc. Comma separated for multiple fields (e.g. -nome,cnpj)"
+// @Param offset query int false "Pagination offset (default 0)"
+// @Param limit query int false "Pagination limit (default 10)"
+// @Success 200 {array} model.ClienteWithSaldo
+// @Failure 500 {object} types.ErrorResponse
+// @Router /clientes/saldos [get]
+func (h *Handler) getAllWithSaldo(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(r.Context(), util.RequestTimeout)
+	defer cancel()
+
+	filters, err := NewClienteWithSaldoFilter(r.URL.Query())
+	if err != nil {
+		util.ErrorJSON(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	clientes, err := h.store.GetAllWithSaldo(ctx, filters)
 	if err != nil {
 		util.ErrorJSON(w, err.Error(), http.StatusInternalServerError)
 		return
