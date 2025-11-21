@@ -39,11 +39,9 @@ const carregarDados = async () => {
 
     // Busca quantidades em paralelo
     const produtosComQuantidade = await Promise.all(produtosTemp.map(async (p) => {
-      let randQnt = Math.floor(Math.random() * 30)
-      return { ...p, quantidade: randQnt }; // TODO: arrumar problemas com endpoint /produtos/{id}/quantidades
       try {
         const resQtd = await api.getProdutoQtd(p.id);
-        return { ...p, quantidade: resQtd.data.quantidade_disponivel };
+        return { ...p, quantidade: resQtd.data.quantidade_disponível };
       } catch {
         return { ...p, quantidade: 0 };
       }
@@ -196,7 +194,7 @@ onMounted(() => {
         <div class="list-cards">
           <div v-if="ofertas.length === 0" class="empty-state">Nenhuma oferta ativa.</div>
           
-          <div v-for="oferta in ofertas" :key="oferta.id_oferta" class="card-oferta">
+          <div v-for="oferta in ofertas" :key="oferta.id_oferta" class="card-item card-oferta">
             <div class="card-header">
               <h3>{{ oferta.nome }}</h3>
               <button @click="deletarItem('oferta', oferta.id_oferta)" class="btn-icon-delete">×</button>
@@ -256,16 +254,6 @@ onMounted(() => {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.page-title {
-  text-align: center;
-  margin-bottom: 30px;
-  font-weight: 300;
-  font-size: 2rem;
-  letter-spacing: 2px;
-  border-bottom: 2px solid var(--edna-gray);
-  padding-bottom: 10px;
-}
-
 /* --- GRID LAYOUT --- */
 .content-grid {
   display: grid;
@@ -280,36 +268,6 @@ onMounted(() => {
   }
 }
 
-/* --- PAINÉIS --- */
-.panel {
-  background-color: var(--edna-dark-gray);
-  border: 0px solid var(--edna-gray);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 1vw rgba(0,0,0,0.5);
-}
-
-.panel h2 {
-  margin-top: 0;
-  border-bottom: 1px solid var(--edna-gray);
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-  color: var(--edna-yellow);
-}
-
-/* --- FORMULÁRIOS --- */
-input, select {
-  background-color: var(--edna-gray);
-  color: var(--edna-white);
-  padding: 8px 12px;
-  border-radius: 6px;
-  outline: none;
-}
-
-input:focus, select:focus {
-  border: 2px solid var(--edna-orange);
-}
-
 /* Estilo do form inline (Produtos) */
 .form-inline {
   display: flex;
@@ -319,6 +277,7 @@ input:focus, select:focus {
 }
 .form-inline input {
   flex: 1;
+  width: auto;
   min-width: 80px;
 }
 
@@ -343,16 +302,6 @@ input:focus, select:focus {
 }
 
 /* --- BOTÕES --- */
-button {
-  color: var(--edna-black);
-  cursor: pointer;
-  border: none;
-  border-radius: 6px;
-  transition: filter 0.2s;
-}
-button:hover {
-  filter: brightness(1.1);
-}
 
 .btn-add {
   background-color: var(--edna-yellow);
@@ -383,7 +332,7 @@ button:hover {
 }
 
 .card-item:hover {
-  border: 2px solid var(--edna-light-gray);
+  border-color: var(--edna-light-gray);
 }
 
 /* --- CARDS (PRODUTOS) --- */
@@ -411,10 +360,10 @@ button:hover {
 }
 
 .marca-tag {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: var(--edna-light-gray);
   text-transform: uppercase;
-  background: #111;
+  background: var(--edna-black);
   padding: 2px 6px;
   border-radius: 4px;
 }
@@ -436,20 +385,6 @@ button:hover {
   color: var(--edna-orange);
 }
 
-.btn-icon-delete {
-  background: none;
-  color: var(--edna-red);
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  opacity: 0.7;
-  padding: 5px;
-  transition: opacity 0.2s;
-}
-.btn-icon-delete:hover {
-  transform: scale(1.2);
-  opacity: 1;
-}
 
 /* --- CARDS (OFERTAS) --- */
 .list-cards {
@@ -462,7 +397,6 @@ button:hover {
 
 .card-oferta {
   background-color: var(--edna-gray);
-  border: 1px solid var(--edna-gray);
   border-radius: 8px;
   padding: 15px;
   position: relative;

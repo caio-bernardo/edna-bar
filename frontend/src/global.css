@@ -12,7 +12,7 @@
   --edna-black: #1A1A1E;
   --edna-white: #F4F4FF;
 }
-
+/* --- ESTILOS GERAIS --- */
 * {
   padding: 0px;
   border: 0px;
@@ -23,28 +23,76 @@
   font-weight: 400;
   font-style: normal;
 }
-
 html {
   background-color: var(--edna-blue);
 }
-
 .nav-space {
   height: 10vh;
 }
-
-table {
-  width: 90%;
-  margin-left: auto;
-  margin-right: auto;
-  border-collapse: collapse;
+.page-title {
+  color: var(--edna-white);
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: 300;
+  font-size: 2rem;
+  letter-spacing: 2px;
+  border-bottom: 2px solid var(--edna-gray);
+  padding-bottom: 10px;
 }
 
-th, td {
-  border: 1px solid var(--edna-white);
-  padding: 8px;
-  text-align: left;
+/* --- PAINÉIS --- */
+.panel {
+  background-color: var(--edna-dark-gray);
+  border: 0px solid var(--edna-gray);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 1vw rgba(0,0,0,0.5);
+}
+.panel h2 {
+  margin-top: 0;
+  border-bottom: 1px solid var(--edna-gray);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  color: var(--edna-yellow);
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-th {
-  background-color: var(--edna-white);
+/* --- FORMULÁRIOS --- */
+input, select {
+  background-color: var(--edna-gray);
+  color: var(--edna-white);
+  padding: 8px 12px;
+  border-radius: 6px;
+  outline: none;
+}
+input:focus, select:focus {
+  border: 2px solid var(--edna-orange);
+}
+
+/* --- BOTÕES --- */
+button {
+  color: var(--edna-black);
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  transition: filter 0.2s;
+}
+button:hover {
+  filter: brightness(1.1);
+}
+.btn-icon-delete {
+  background: none;
+  color: var(--edna-red);
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  opacity: 0.7;
+  padding: 5px;
+  transition: opacity 0.2s;
+}
+.btn-icon-delete:hover {
+  transform: scale(1.2);
+  opacity: 1;
 }
