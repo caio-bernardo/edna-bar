@@ -419,7 +419,7 @@ const formatarData = (isoStr) => new Date(isoStr).toLocaleString("pt-BR");
 
 .vendas-layout {
     display: flex;
-    height: calc(100vh - 60px); /* Ajuste para não estourar a tela com a nav e tabs */
+    height: calc(100vh - 16vh); /* Ajuste para não estourar a tela com a nav e tabs */
     background-color: var(--edna-black);
     overflow: hidden;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;

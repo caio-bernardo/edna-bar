@@ -396,7 +396,7 @@ tr:hover td {
 /* --- GRID DE ITENS (Cards) --- */
 .grid-items {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(312px, 1fr));
     gap: 20px;
 }
 
@@ -406,10 +406,10 @@ tr:hover td {
     padding: 20px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     position: relative;
     transition: transform 0.2s;
-    border-left: 4px solid var(--edna-green); /* Identidade visual de item */
+    border-left: 4px solid var(--edna-green);
 }
 
 .item-card:hover {
@@ -437,6 +437,8 @@ tr:hover td {
     padding: 8px 12px;
     border-radius: 6px;
     min-width: 60px;
+    margin-top: 1rem;
+    margin-left: 1rem;
 }
 
 .qtd-label {
@@ -447,7 +449,7 @@ tr:hover td {
 }
 
 .qtd-value {
-    font-size: 1.2rem;
+    font-size: 1rem;
     color: var(--edna-white);
     font-weight: bold;
 }
@@ -458,8 +460,9 @@ tr:hover td {
     right: 8px;
     background: none;
     border: none;
-    color: var(--edna-gray);
-    font-size: 1.4rem;
+    color: var(--edna-red);
+    opacity: 0.7;
+    font-size: 1.5rem;
     line-height: 1;
     cursor: pointer;
     transition: color 0.2s;
@@ -467,6 +470,8 @@ tr:hover td {
 
 .btn-close:hover {
     color: var(--edna-red);
+    transform: scale(1.2);
+    opacity: 1.0;
 }
 
 /* Scrollbar da página */
