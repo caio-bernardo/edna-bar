@@ -25,6 +25,7 @@ A API _backend_ foi criada utilizando a linguagem **Go** (1.24). O servidor HTTP
 
 ## Como rodar
 
+### Backend
 Configure as variáveis de ambiente em um arquivo `.env` seguindo os exemplos em `.env.example`.
 
 Primeiro, instale a versão `1.24` da linguagem Go, a versão mais recente do Docker e Docker-compose. Em adendo para realizar as migrações é preciso instalar o `go-migrate`, você pode fazer isso com:
@@ -35,6 +36,12 @@ go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@v4.
 Inicie a base de dados com `make docker-run` (use `sudo` se necessário). Vá para a migração mais recente (se já não estiver) com `./migrate.sh up`, isso irá criar as tabelas no seu banco de dados (e populá-lo com dados), se quiser saber mais sobre o conceito de migrações veja a próxima seção.
 
 Por último rode projeto com `make run`. Para rodar com _hot reloading_ (alterações serão refletidas instantâneamente) use `make watch`.
+
+### Frontend
+
+Entre na pasta `frontend` com `cd frontend`. Instale as dependências necessárias com `npm install` e rode no modo de desenvolvimento com `npm run dev`.
+
+Leia mais informações em [frontend/README.md](frontend/README.md)
 
 ### Migrações
 

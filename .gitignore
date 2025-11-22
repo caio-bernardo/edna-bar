@@ -34,3 +34,4 @@ main
 
 # Node module
 node_modules/
+dist/
