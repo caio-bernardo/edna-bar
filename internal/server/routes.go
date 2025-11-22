@@ -1,9 +1,12 @@
 package server
 
 import (
+	"edna/internal/services/aplica_oferta"
 	"edna/internal/services/cliente"
 	"edna/internal/services/fornecedor"
 	"edna/internal/services/funcionario"
+	"edna/internal/services/item_oferta"
+	"edna/internal/services/item_venda"
 	"edna/internal/services/lote"
 	"edna/internal/services/oferta"
 	"edna/internal/services/produto"
@@ -23,6 +26,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	v1 := http.NewServeMux()
 	mux := http.NewServeMux()
 
+	itemVendaHandler := item_venda.NewHandler(s.itemVendaStore)
 	fornecedorHandler := fornecedor.NewHandler(s.fornecedorStore)
 	produtoHandler := produto.NewHandler(s.produtoStore)
 	clienteHandler := cliente.NewHandler(s.clienteStore)
@@ -31,6 +35,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 	vendaHandler := venda.NewHandler(s.vendaStore)
 	relatorioHandler := relatorio.NewHandler(s.relatorioStore)
 	funcionarioHandler := funcionario.NewHandler(s.funcionarioStore)
+	itemOfertaHandler := item_oferta.NewHandler(s.itemOfertaStore)
+	aplicaOfertaHandler := aplica_oferta.NewHandler(s.aplicaOfertaStore)
 
 	mux.HandleFunc("/health", s.healthHandler)
 	fornecedorHandler.RegisterRoutes(mux)
@@ -41,6 +47,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	vendaHandler.RegisterRoutes(mux)
 	relatorioHandler.RegisterRoutes(mux)
 	funcionarioHandler.RegisterRoutes(mux)
+	itemVendaHandler.RegisterRoutes(mux)
+	itemOfertaHandler.RegisterRoutes(mux)
+	aplicaOfertaHandler.RegisterRoutes(mux)
 
 	// Register routes
 	v1.HandleFunc("/", s.trailingSlashHandler)

@@ -81,9 +81,7 @@ export default {
   // Nota: Se o seu backend não faz isso automático, o front precisa descobrir o lote.
   // Vou assumir por enquanto que vamos listar lotes ou pegar o primeiro disponível.
   getLotesPorProduto(idProduto) {
-    return apiClient.get(
-      `/lotes?filter-id_produto=eq.${idProduto}&sort=validade`,
-    );
+    return apiClient.get(`/lotes/produtos/${idProduto}`);
   },
   // --- VENDAS & HISTÓRICO ---
   getVendas(filters = null) {

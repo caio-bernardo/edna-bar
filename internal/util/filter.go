@@ -28,6 +28,13 @@ type Filter struct {
 	Limit   uint32
 }
 
+// Helper privado para garantir que o mapa existe
+func (ff *Filter) initMap() {
+	if ff.Filters == nil {
+		ff.Filters = make(FilterMap)
+	}
+}
+
 func (ff *Filter) GetLimit(params url.Values) error {
 	if params.Get("limit") != "" {
 		if l, err := strconv.ParseUint(params.Get("limit"), 10, 32); err == nil {
@@ -66,10 +73,7 @@ func (ff *Filter) GetSorts(params url.Values, attrs []string) error {
 }
 
 func (ff *Filter) GetFilterStr(params url.Values, key string) error {
-	// inicializa filter caso não tenha sido inicializada antes
-	if ff.Filters == nil {
-		ff.Filters = make(FilterMap)
-	}
+	ff.initMap() // <--- CORREÇÃO (usando helper)
 	filterKey := fmt.Sprintf("filter-%s", key)
 
 	if params.Get(filterKey) != "" {
@@ -89,6 +93,7 @@ func (ff *Filter) GetFilterStr(params url.Values, key string) error {
 }
 
 func (ff *Filter) GetFilterInt(params url.Values, key string) error {
+	ff.initMap() // <--- CORREÇÃO CRÍTICA AQUI
 	filterKey := fmt.Sprintf("filter-%s", key)
 
 	if params.Get(filterKey) != "" {
@@ -113,6 +118,7 @@ func (ff *Filter) GetFilterInt(params url.Values, key string) error {
 }
 
 func (ff *Filter) GetFilterFloat(params url.Values, key string) error {
+	ff.initMap() // <--- CORREÇÃO CRÍTICA AQUI
 	filterKey := fmt.Sprintf("filter-%s", key)
 
 	if params.Get(filterKey) != "" {
@@ -137,6 +143,7 @@ func (ff *Filter) GetFilterFloat(params url.Values, key string) error {
 }
 
 func (ff *Filter) GetFilterTime(params url.Values, key string) error {
+	ff.initMap() // <--- CORREÇÃO CRÍTICA AQUI
 	filterKey := fmt.Sprintf("filter-%s", key)
 
 	if params.Get(filterKey) != "" {

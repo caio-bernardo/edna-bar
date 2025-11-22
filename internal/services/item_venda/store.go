@@ -95,7 +95,7 @@ func (s *Store) GetItemsByVendaID(ctx context.Context, idVenda int64) ([]ItemVen
 }
 
 func (s *Store) GetAll(ctx context.Context, filter util.Filter) ([]model.ItemVenda, error) {
-	query := "SELECT id_item_venda, id_venda, id_lote, quantidade, valor_unitario FROM ItemVenda AS IV"
+	query := "SELECT id_item_venda, id_venda, id_lote, quantidade, valor_unitario FROM item_venda AS IV"
 
 	rows, err := util.QueryRowsWithFilter(s.db, ctx, query, &filter, "IV")
 	if err != nil {
@@ -115,7 +115,7 @@ func (s *Store) GetAll(ctx context.Context, filter util.Filter) ([]model.ItemVen
 }
 
 func (s *Store) GetByID(ctx context.Context, id int64) (*model.ItemVenda, error) {
-	query := "SELECT id_item_venda, id_venda, id_lote, quantidade, valor_unitario FROM ItemVenda WHERE id_item_venda = $1;"
+	query := "SELECT id_item_venda, id_venda, id_lote, quantidade, valor_unitario FROM item_venda WHERE id_item_venda = $1;"
 	row := s.db.QueryRowContext(ctx, query, id)
 
 	var iv model.ItemVenda
@@ -130,13 +130,13 @@ func (s *Store) GetByID(ctx context.Context, id int64) (*model.ItemVenda, error)
 }
 
 func (s *Store) Create(ctx context.Context, props *model.ItemVenda) error {
-	query := "INSERT INTO ItemVenda (id_venda, id_lote, quantidade, valor_unitario) VALUES ($1, $2, $3, $4) RETURNING id_item_venda;"
+	query := "INSERT INTO item_venda (id_venda, id_lote, quantidade, valor_unitario) VALUES ($1, $2, $3, $4) RETURNING id_item_venda;"
 	res := s.db.QueryRowContext(ctx, query, props.IDVenda, props.IDLote, props.Quantidade, props.ValorUnitario)
 	return res.Scan(&props.IDItemVenda)
 }
 
 func (s *Store) Update(ctx context.Context, props *model.ItemVenda) error {
-	query := "UPDATE ItemVenda SET id_venda = $1, id_lote = $2, quantidade = $3, valor_unitario = $4 WHERE id_item_venda = $5;"
+	query := "UPDATE item_venda SET id_venda = $1, id_lote = $2, quantidade = $3, valor_unitario = $4 WHERE id_item_venda = $5;"
 	res, err := s.db.ExecContext(ctx, query, props.IDVenda, props.IDLote, props.Quantidade, props.ValorUnitario, props.IDItemVenda)
 	if err != nil {
 		return err
@@ -152,7 +152,7 @@ func (s *Store) Update(ctx context.Context, props *model.ItemVenda) error {
 }
 
 func (s *Store) Delete(ctx context.Context, id int64) (*model.ItemVenda, error) {
-	query := "DELETE FROM ItemVenda WHERE id_item_venda = $1 RETURNING id_item_venda, id_venda, id_lote, quantidade, valor_unitario;"
+	query := "DELETE FROM item_venda WHERE id_item_venda = $1 RETURNING id_item_venda, id_venda, id_lote, quantidade, valor_unitario;"
 	var iv model.ItemVenda
 	row := s.db.QueryRowContext(ctx, query, id)
 	err := row.Scan(&iv.IDItemVenda, &iv.IDVenda, &iv.IDLote, &iv.Quantidade, &iv.ValorUnitario)

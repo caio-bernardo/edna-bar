@@ -14,8 +14,8 @@ type Handler struct {
 
 type ItemOfertaStore interface {
 	GetAll(ctx context.Context, filter util.Filter) ([]model.ItemOferta, error)
-	GetItemByID(ctx context.Context, id int64) (*model.ItemOferta, error)
-	GetOfertaByID(ctx context.Context, id int64) (*model.ItemOferta, error)
+	GetAllByItemID(ctx context.Context, id int64) ([]model.ItemOferta, error)
+	GetAllByOfertaID(ctx context.Context, id int64) ([]model.ItemOferta, error)
 	GetByComposedID(ctx context.Context, id_produto int64, id_oferta int64) (*model.ItemOferta, error)
 	Create(ctx context.Context, props *model.ItemOferta) error
 	Update(ctx context.Context, props *model.ItemOferta) error
@@ -32,8 +32,8 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("GET /item_ofertas/{id_produto}/{id_oferta}", h.fetch)
 	mux.HandleFunc("PUT /item_ofertas/{id_produto}/{id_oferta}", h.update)
 	mux.HandleFunc("DELETE /item_ofertas/{id_produto}/{id_oferta}", h.delete)
-	mux.HandleFunc("GET /item_ofertas/item/{id}", h.getItemByID)
-	mux.HandleFunc("GET /item_ofertas/oferta/{id}", h.getOfertaByID)
+	mux.HandleFunc("GET /item_ofertas/item/{id}", h.getAllByItemID)
+	mux.HandleFunc("GET /item_ofertas/oferta/{id}", h.getAllByOfertaID)
 }
 
 // @Summary List Item Ofertas
@@ -76,7 +76,7 @@ func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
 // @Failure 404 {object} types.ErrorResponse
 // @Failure 500 {object} types.ErrorResponse
 // @Router /item_ofertas/item/{id} [get]
-func (h *Handler) getItemByID(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) getAllByItemID(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), util.RequestTimeout)
 	defer cancel()
 
@@ -86,7 +86,7 @@ func (h *Handler) getItemByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	itens, err := h.store.GetItemByID(ctx, id)
+	itens, err := h.store.GetAllByItemID(ctx, id)
 	if err != nil {
 		util.ErrorJSON(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -111,7 +111,7 @@ func (h *Handler) getItemByID(w http.ResponseWriter, r *http.Request) {
 // @Failure 404 {object} types.ErrorResponse
 // @Failure 500 {object} types.ErrorResponse
 // @Router /item_ofertas/oferta/{id} [get]
-func (h *Handler) getOfertaByID(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) getAllByOfertaID(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), util.RequestTimeout)
 	defer cancel()
 
@@ -121,7 +121,7 @@ func (h *Handler) getOfertaByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	itens, err := h.store.GetOfertaByID(ctx, id)
+	itens, err := h.store.GetAllByOfertaID(ctx, id)
 	if err != nil {
 		util.ErrorJSON(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -137,11 +137,9 @@ func (h *Handler) getOfertaByID(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// @Summary Create ItemOferta
-// @Tags ItemOferta
-// @Accept json
+// @Summary Get ItemOferta by Item ID
+// @Tags Item Oferta
 // @Produce json
-// @Param itemOferta body model.ItemOfertaCreate true "ItemOferta payload"
 // @Success 201 {object} model.ItemOferta
 // @Failure 400 {object} types.ErrorResponse
 // @Failure 422 {object} types.ErrorResponse

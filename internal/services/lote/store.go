@@ -50,6 +50,27 @@ func (s *Store) GetByID(ctx context.Context, id int64) (*model.Lote, error) {
 	return &l, nil
 }
 
+func (s *Store) GetAllByIDProduto(ctx context.Context, id int64) ([]model.Lote, error) {
+	query := "SELECT * FROM Lote WHERE id_produto = $1"
+	row, err := s.db.QueryContext(ctx, query, id)
+	if err != nil {
+		return nil, err
+	}
+	defer row.Close()
+
+	lote := make([]model.Lote, 0)
+	for row.Next() {
+		var l model.Lote
+		err := row.Scan(&l.Id, &l.IdFornecedor, &l.IdProduto, &l.DataFornecimento, &l.Validade, &l.PrecoUnitario, &l.Estragados, &l.QuantidadeInicial)
+		if err != nil {
+			return nil, err
+		}
+		lote = append(lote, l)
+	}
+
+	return lote, nil
+}
+
 func (s *Store) Create(ctx context.Context, props *model.Lote) error {
 	query := `
 		INSERT INTO Lote (id_fornecedor, id_produto, data_fornecimento, validade, preco_unitario, estragados, quantidade_inicial)

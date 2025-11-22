@@ -107,7 +107,7 @@ const finalizarVenda = async () => {
             if (lote) {
                 await api.createItemVenda({
                     id_venda: idVenda,
-                    id_produto: item.id,
+
                     id_lote: lote.id_lote,
                     quantidade: parseInt(item.quantidade),
                     valor_unitario: parseFloat(item.preco_venda),
@@ -135,9 +135,7 @@ const carregarHistorico = async () => {
     carregando.value = true;
     try {
         // Ordena por data decrescente (backend sort)
-        const res = await api.getVendas({
-            params: { sort: "-data_hora_renda" },
-        });
+        const res = await api.getVendas();
         historicoVendas.value = res.data || [];
     } finally {
         carregando.value = false;

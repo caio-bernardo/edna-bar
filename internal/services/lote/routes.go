@@ -14,14 +14,15 @@ type Handler struct {
 }
 
 type GastoMensal struct {
-	Mes int `json:"mes"`
-	Total float64 `json:"total_gasto"`
-	Quantidade uint `json:"lotes_comprados"`
+	Mes        int     `json:"mes"`
+	Total      float64 `json:"total_gasto"`
+	Quantidade uint    `json:"lotes_comprados"`
 }
 
 type LoteStore interface {
 	GetAll(ctx context.Context, filter util.Filter) ([]model.Lote, error)
 	GetRelatorio(ctx context.Context) (map[uint]GastoMensal, error)
+	GetAllByIDProduto(ctx context.Context, id int64) ([]model.Lote, error)
 	Create(ctx context.Context, props *model.Lote) error
 	GetByID(ctx context.Context, id int64) (*model.Lote, error)
 	Update(ctx context.Context, props *model.Lote) error
@@ -34,6 +35,7 @@ func NewHandler(store LoteStore) *Handler {
 
 func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("GET /lotes", h.getAll)
+	mux.HandleFunc("GET /lotes/produtos/{id}", h.getAllByIDProduto)
 	mux.HandleFunc("GET /lotes/relatorio", h.getRelatorio)
 	mux.HandleFunc("POST /lotes", h.create)
 	mux.HandleFunc("GET /lotes/{id}", h.fetch)
@@ -228,6 +230,37 @@ func (h *Handler) getRelatorio(w http.ResponseWriter, r *http.Request) {
 
 	model, err := h.store.GetRelatorio(ctx)
 	if err != nil {
+		util.ErrorJSON(w, err.Error(), http.StatusUnprocessableEntity)
+		return
+	}
+
+	util.WriteJSON(w, http.StatusOK, model)
+}
+
+// @Summary Get All Lotes by ID Produto
+// @Tags Lote
+// @Produce json
+// @Param id path string true "ID Produto"
+// @Success 200 {object} []Lote
+// @Failure 400 {object} types.ErrorResponse
+// @Failure 422 {object} types.ErrorResponse
+// @Router /lotes/produtos/{id} [get]
+func (h *Handler) getAllByIDProduto(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(r.Context(), util.RequestTimeout)
+	defer cancel()
+
+	id, err := util.GetIDParam(r)
+	if err != nil {
+		util.ErrorJSON(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	model, err := h.store.GetAllByIDProduto(ctx, id)
+	if err != nil {
+		if err == types.ErrNotFound {
+			util.ErrorJSON(w, "Lote not found.", http.StatusNotFound)
+			return
+		}
 		util.ErrorJSON(w, err.Error(), http.StatusUnprocessableEntity)
 		return
 	}

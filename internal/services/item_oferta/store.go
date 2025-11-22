@@ -17,7 +17,7 @@ func NewStore(db *sql.DB) *Store {
 }
 
 func (s *Store) GetAll(ctx context.Context, filter util.Filter) ([]model.ItemOferta, error) {
-	query := "SELECT quantidade, id_produto, id_oferta FROM ItemOferta as io"
+	query := "SELECT quantidade, id_produto, id_oferta FROM contem_item_oferta as io"
 
 	rows, err := util.QueryRowsWithFilter(s.db, ctx, query, &filter, "io")
 	if err != nil {
@@ -39,7 +39,7 @@ func (s *Store) GetAll(ctx context.Context, filter util.Filter) ([]model.ItemOfe
 
 // GetByComposedID busca uma entrada específica de ItemOferta pela sua chave primária composta.
 func (s *Store) GetByComposedID(ctx context.Context, id_produto int64, id_oferta int64) (*model.ItemOferta, error) {
-	query := "SELECT quantidade, id_produto, id_oferta FROM ItemOferta WHERE id_produto = $1 AND id_oferta = $2"
+	query := "SELECT quantidade, id_produto, id_oferta FROM contem_item_oferta WHERE id_produto = $1 AND id_oferta = $2"
 	row := s.db.QueryRowContext(ctx, query, id_produto, id_oferta)
 
 	var io model.ItemOferta
@@ -53,9 +53,9 @@ func (s *Store) GetByComposedID(ctx context.Context, id_produto int64, id_oferta
 	return &io, nil
 }
 
-// GetItemByID busca todas as entradas de ItemOferta para um determinado produto.
-func (s *Store) GetItemByID(ctx context.Context, id_produto int64) ([]model.ItemOferta, error) {
-	query := "SELECT quantidade, id_produto, id_oferta FROM ItemOferta WHERE id_produto = $1"
+// GetAllByItemID busca todas as entradas de ItemOferta para um determinado produto.
+func (s *Store) GetAllByItemID(ctx context.Context, id_produto int64) ([]model.ItemOferta, error) {
+	query := "SELECT quantidade, id_produto, id_oferta FROM contem_item_oferta WHERE id_produto = $1"
 	rows, err := s.db.QueryContext(ctx, query, id_produto)
 	if err != nil {
 		return nil, err
@@ -74,9 +74,9 @@ func (s *Store) GetItemByID(ctx context.Context, id_produto int64) ([]model.Item
 	return itensOferta, nil
 }
 
-// GetOfertaByID busca todas as entradas de ItemOferta para uma determinada oferta.
-func (s *Store) GetOfertaByID(ctx context.Context, id_oferta int64) ([]model.ItemOferta, error) {
-	query := "SELECT quantidade, id_produto, id_oferta FROM ItemOferta WHERE id_oferta = $1"
+// GetAllByOfertaID busca todas as entradas de ItemOferta para uma determinada oferta.
+func (s *Store) GetAllByOfertaID(ctx context.Context, id_oferta int64) ([]model.ItemOferta, error) {
+	query := "SELECT quantidade, id_produto, id_oferta FROM contem_item_oferta WHERE id_oferta = $1"
 	rows, err := s.db.QueryContext(ctx, query, id_oferta)
 	if err != nil {
 		return nil, err
@@ -96,13 +96,13 @@ func (s *Store) GetOfertaByID(ctx context.Context, id_oferta int64) ([]model.Ite
 }
 
 func (s *Store) Create(ctx context.Context, props *model.ItemOferta) error {
-	query := "INSERT INTO ItemOferta (quantidade, id_produto, id_oferta) VALUES ($1, $2, $3);"
+	query := "INSERT INTO contem_item_oferta (quantidade, id_produto, id_oferta) VALUES ($1, $2, $3);"
 	_, err := s.db.ExecContext(ctx, query, props.Quantidade, props.IDProduto, props.IDOferta)
 	return err
 }
 
 func (s *Store) Update(ctx context.Context, props *model.ItemOferta) error {
-	query := "UPDATE ItemOferta SET quantidade = $1 WHERE id_produto = $2 AND id_oferta = $3"
+	query := "UPDATE contem_item_oferta SET quantidade = $1 WHERE id_produto = $2 AND id_oferta = $3"
 	res, err := s.db.ExecContext(ctx, query, props.Quantidade, props.IDProduto, props.IDOferta)
 	if err != nil {
 		return err
@@ -124,7 +124,7 @@ func (s *Store) Delete(ctx context.Context, id_produto int64, id_oferta int64) (
 		return nil, err
 	}
 
-	query := "DELETE FROM ItemOferta WHERE id_produto = $1 AND id_oferta = $2"
+	query := "DELETE FROM contem_item_oferta WHERE id_produto = $1 AND id_oferta = $2"
 	res, err := s.db.ExecContext(ctx, query, id_produto, id_oferta)
 	if err != nil {
 		return nil, err

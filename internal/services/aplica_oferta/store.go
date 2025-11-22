@@ -95,7 +95,7 @@ func (s *Store) GetAll(ctx context.Context, filter util.Filter) ([]model.AplicaO
 	return aplicaOfertas, nil
 }
 
-func (s *Store) GetById(ctx context.Context, id int) (*model.AplicaOferta, error) {
+func (s *Store) GetByID(ctx context.Context, id int64) (*model.AplicaOferta, error) {
 	query := `
 		SELECT id_aplica_oferta, id_oferta, id_venda, id_item_venda
 		FROM aplica_oferta
@@ -151,7 +151,7 @@ func (s *Store) Update(ctx context.Context, c *model.AplicaOferta) error {
 	return nil
 }
 
-func (s *Store) Delete(ctx context.Context, id int) (*model.AplicaOferta, error) {
+func (s *Store) Delete(ctx context.Context, id int64) (*model.AplicaOferta, error) {
 	query := `
 		DELETE FROM aplica_oferta
 		WHERE id_aplica_oferta = $1
