@@ -1,12 +1,17 @@
 <script setup>
 import { ref, onMounted, reactive, computed } from 'vue';
 import api from '@/services/api';
+import EditLoteModal from '@/components/EditLoteModal.vue';
 
 // --- ESTADO ---
 const fornecedores = ref([]);
 const lotes = ref([]);
 const produtos = ref([]);
 const carregando = ref(false);
+
+// Estados do Modal de Edição de lote
+const showEditLoteModal = ref(false);
+const loteParaEditar = ref({});
 
 // Formulário de Fornecedor
 const formFornecedor = reactive({
@@ -121,6 +126,22 @@ const deletarItem = async (tipo, id) => {
   }
 };
 
+const abrirEdicaoLote = (lote) => {
+  loteParaEditar.value = { ...lote }; // Clona para não alterar a lista
+  showEditLoteModal.value = true;
+};
+
+const salvarEdicaoLote = async (dados) => {
+  try {
+    // O ID vem como 'id_lote' do objeto lote original no banco
+    await api.updateLote(loteParaEditar.value.id_lote, dados);
+    showEditLoteModal.value = false;
+    await carregarDados();
+  } catch (error) {
+    alert("Erro ao atualizar lote: " + (error.response?.data?.detail || error.message));
+  }
+};
+
 onMounted(() => {
   carregarDados();
 });
@@ -132,6 +153,15 @@ onMounted(() => {
     
     <div class="palette-provider">
       <h1 class="page-title">Estoque & Fornecedores</h1>
+
+      <EditLoteModal 
+      :visible="showEditLoteModal"
+      :lote="loteParaEditar"
+      :fornecedores="fornecedores"
+      :produtos="produtos"
+      @close="showEditLoteModal = false"
+      @save="salvarEdicaoLote"
+      />
 
       <div class="grid-layout">
         
@@ -197,7 +227,10 @@ onMounted(() => {
                 <div class="card-footer">
                   <span v-if="lote.estragados > 0" class="bad-items">{{ lote.estragados }} estragados</span>
                   <span v-else class="ok-items">0 estragados</span>
-                  <button @click="deletarItem('lote', lote.id_lote)" class="btn-icon-delete">×</button>
+                  <div class="actions-group">
+                    <button @click="abrirEdicaoLote(lote)" class="btn-icon-edit" title="Editar">✏️</button>
+                    <button @click="deletarItem('lote', lote.id_lote)" class="btn-icon-delete" title="Excluir">×</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -380,6 +413,28 @@ onMounted(() => {
 .btn-icon:hover {
   opacity: 1;
   transform: scale(1.1);
+}
+
+.actions-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-icon-edit {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: transform 0.2s, opacity 0.2s;
+  filter: grayscale(100%); 
+}
+
+.btn-icon-edit:hover {
+  opacity: 1;
+  transform: scale(1.2);
+  filter: none;
 }
 
 /* --- CARDS --- */

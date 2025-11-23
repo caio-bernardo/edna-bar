@@ -1,11 +1,16 @@
 <script setup>
 import { ref, onMounted, reactive } from "vue";
 import api from "@/services/api";
+import EditProdutoModal from "@/components/EditProdutoModal.vue";
 
 // --- ESTADO ---
 const produtos = ref([]);
 const ofertas = ref([]);
 const carregando = ref(false);
+
+// Estado do Modal de Edição
+const showEditModal = ref(false);
+const produtoParaEditar = ref({});
 
 // Formulário de Produto
 const produtoForm = reactive({
@@ -147,6 +152,23 @@ const deletarItem = async (tipo, id) => {
     }
 };
 
+// Abre o modal com os dados do produto clicado
+const abrirEdicao = (prod) => {
+    produtoParaEditar.value = { ...prod }; // Copia para não alterar a lista diretamente
+    showEditModal.value = true;
+};
+
+// Recebe os dados salvos do modal e envia para a API
+const salvarEdicao = async (dadosAtualizados) => {
+    try {
+        await api.updateProdutoComercial(dadosAtualizados.id, dadosAtualizados);
+        showEditModal.value = false; // Fecha modal
+        await carregarDados(); // Atualiza lista
+    } catch (error) {
+        alert("Erro ao atualizar produto: " + (error.response?.data?.detail || error.message));
+    }
+};
+
 // Inicialização
 onMounted(() => {
     carregarDados();
@@ -157,6 +179,13 @@ onMounted(() => {
     <div class="nav-space"></div>
     <div class="comercial-container">
         <h1 class="page-title">Comercial</h1>
+
+        <EditProdutoModal 
+            :visible="showEditModal" 
+            :produto="produtoParaEditar" 
+            @close="showEditModal = false" 
+            @save="salvarEdicao" 
+        />
 
         <div class="content-grid">
             <section class="panel produtos-panel">
@@ -226,12 +255,14 @@ onMounted(() => {
                                 </span>
                             </div>
                         </div>
-                        <button
-                            @click="deletarItem('produto', prod.id)"
-                            class="btn-icon-delete"
-                        >
-                            ×
-                        </button>
+                        <div class="card-actions">
+                            <button @click="abrirEdicao(prod)" class="btn-icon-edit" title="Editar">
+                                ✏️
+                            </button>
+                            <button @click="deletarItem('produto', prod.id)" class="btn-icon-delete" title="Excluir">
+                                ×
+                            </button>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -568,6 +599,28 @@ button:hover {
 .btn-icon-delete:hover {
     transform: scale(1.2);
     opacity: 1;
+}
+
+.card-actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-icon-edit {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: transform 0.2s, opacity 0.2s;
+    filter: grayscale(100%); 
+}
+
+.btn-icon-edit:hover {
+    opacity: 1;
+    transform: scale(1.2);
+    filter: none;
 }
 
 /* --- CARDS (OFERTAS) --- */

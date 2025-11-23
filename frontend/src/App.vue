@@ -6,17 +6,11 @@
             <nav class="navbar">
                 <ul class="nav-links">
                     <li><RouterLink to="/">Início</RouterLink></li>
-                    <li>
-                        <RouterLink to="/financeiro">Financeiro</RouterLink>
-                    </li>
-                    <li><RouterLink to="/produtos">Produtos</RouterLink></li>
+                    <li><RouterLink to="/financeiro">Financeiro</RouterLink></li>
+                    <li><RouterLink to="/funcionarios">Funcionários</RouterLink></li>
                     <li><RouterLink to="/vendas">Vendas</RouterLink></li>
-                    <li>
-                        <RouterLink to="/fornecedores">Fornecedores</RouterLink>
-                    </li>
-                    <li>
-                        <RouterLink to="/funcionarios">Funcionários</RouterLink>
-                    </li>
+                    <li><RouterLink to="/produtos">Produtos</RouterLink></li>
+                    <li><RouterLink to="/fornecedores">Fornecedores</RouterLink></li>
                 </ul>
             </nav>
         </header>

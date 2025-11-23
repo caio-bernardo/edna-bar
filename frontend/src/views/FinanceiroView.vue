@@ -315,7 +315,7 @@ onMounted(() => {
 
 /* --- LAYOUT --- */
 .nav-space {
-    background-image: linear-gradient(220deg, var(--edna-red), var(--edna-green));
+    background-image: linear-gradient(220deg, var(--edna-blue), var(--edna-green));
 }
 
 .page-container {

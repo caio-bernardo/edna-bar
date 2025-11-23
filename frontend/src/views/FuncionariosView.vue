@@ -1,13 +1,23 @@
 <script setup>
 import { ref, onMounted, reactive } from 'vue';
 import api from '@/services/api';
+import EditFuncionarioModal from '@/components/EditFuncionarioModal.vue';
+import EditItemModal from '@/components/EditItemModal.vue';
 
 // --- ESTADO ---
 const funcionarios = ref([]);
 const itensEstrutura = ref([]);
 const carregando = ref(false);
 
-// Formulário Funcionário (Baseado no Model do Swagger/Go)
+// Estados do Modal de Edição de funcionário
+const showEditModal = ref(false);
+const funcionarioParaEditar = ref({});
+
+// Estados do Modal de Edição de item estrutural
+const showEditItemModal = ref(false);
+const itemParaEditar = ref({});
+
+// Formulário Funcionário
 const formFuncionario = reactive({
   nome: '',
   CPF: '',
@@ -89,6 +99,36 @@ const salvarItem = async () => {
   }
 };
 
+const abrirEdicaoFuncionario = (func) => {
+  funcionarioParaEditar.value = { ...func }; // Clona o objeto
+  showEditModal.value = true;
+};
+
+const salvarEdicaoFuncionario = async (dadosAtualizados) => {
+  try {
+    await api.updateFuncionario(dadosAtualizados.id, dadosAtualizados);
+    showEditModal.value = false;
+    await carregarDados();
+  } catch (error) {
+    alert("Erro ao atualizar funcionário: " + (error.response?.data?.detail || error.message));
+  }
+};
+
+const abrirEdicaoItem = (item) => {
+  itemParaEditar.value = { ...item };
+  showEditItemModal.value = true;
+};
+
+const salvarEdicaoItem = async (dados) => {
+  try {
+    await api.updateProduto(dados.id, dados);
+    showEditItemModal.value = false;
+    await carregarDados();
+  } catch (error) {
+    alert("Erro ao atualizar item.");
+  }
+};
+
 const deletar = async (contexto, id) => {
   if(!confirm("Remover este registro?")) return;
   try {
@@ -113,6 +153,20 @@ onMounted(() => {
       <div class="panel-header">
         <h2>Funcionários</h2>
       </div>
+
+      <EditFuncionarioModal 
+      :visible="showEditModal" 
+      :funcionario="funcionarioParaEditar"
+      @close="showEditModal = false"
+      @save="salvarEdicaoFuncionario"
+      />
+
+      <EditItemModal 
+      :visible="showEditItemModal"
+      :item="itemParaEditar"
+      @close="showEditItemModal = false"
+      @save="salvarEdicaoItem"
+      />
 
       <div class="form-row">
         <input v-model="formFuncionario.nome" placeholder="Nome Completo" />
@@ -158,7 +212,10 @@ onMounted(() => {
               <td>{{ func.expediente }}</td>
               <td class="money">R$ {{ func.salario.toFixed(2) }}</td>
               <td>
-                <button @click="deletar('func', func.id)" class="btn-delete">Excluir</button>
+                <div class="action-group">
+                  <button @click="abrirEdicaoFuncionario(func)" class="btn-edit" title="Editar">✏️</button>
+                  <button @click="deletar('func', func.id)" class="btn-delete">Excluir</button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -189,7 +246,10 @@ onMounted(() => {
             <span class="qtd-label">Qtd:</span>
             <span class="qtd-value">{{ item.quantidade }}</span>
           </div>
-          <button @click="deletar('item', item.id)" class="btn-close">×</button>
+          <div class="card-actions">
+              <button @click="abrirEdicaoItem(item)" class="btn-icon-edit" title="Editar">✏️</button>
+              <button @click="deletar('item', item.id)" class="btn-close" title="Excluir">×</button>
+          </div>
         </div>
       </div>
     </section>
@@ -388,9 +448,43 @@ tr:hover td {
     font-weight: bold;
 }
 
+.action-group {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-edit {
+  background: transparent;
+  border: 1px solid var(--edna-blue);
+  color: var(--edna-blue);
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-edit:hover {
+  background-color: var(--edna-blue);
+  color: var(--edna-black);
+}
+
+.btn-delete {
+    background-color: transparent;
+    border: 1px solid var(--edna-red);
+    color: var(--edna-red);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
 .btn-delete:hover {
-    background-color: var(--edna-red);
-    color: var(--edna-dark-gray);
+  background-color: var(--edna-red);
+  color: var(--edna-dark-gray);
 }
 
 /* --- GRID DE ITENS (Cards) --- */
@@ -452,6 +546,25 @@ tr:hover td {
     font-size: 1rem;
     color: var(--edna-white);
     font-weight: bold;
+}
+
+.btn-icon-edit {
+    position: absolute;
+    top: 12px;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: transform 0.2s, opacity 0.2s;
+    filter: grayscale(100%); 
+}
+
+.btn-icon-edit:hover {
+    opacity: 1;
+    transform: scale(1.2);
+    filter: none;
 }
 
 .btn-close {

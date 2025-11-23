@@ -170,7 +170,7 @@ func (s *Store) UpdateComercial(ctx context.Context, props *model.Comercial) err
 }
 
 func (s *Store) Update(ctx context.Context, props *model.Produto) error {
-	query := "UPDATE Produto SET nome = $1, categoria = $2, marca = $3, quantidade_disponivel = $4, quantidade_total = $5 WHERE id_produto = $6;"
+	query := "UPDATE Produto SET nome = $1, categoria = $2, marca = $3 WHERE id_produto = $4;"
 
 	res, err := s.db.ExecContext(ctx, query, props.Nome, props.Categoria, props.Marca, props.Id)
 	if err != nil {

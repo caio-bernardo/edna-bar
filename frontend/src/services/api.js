@@ -17,18 +17,15 @@ export default {
     return apiClient.get(`/fornecedores/${id}`);
   },
   createFornecedor(data) {
-    // data é um objeto JS, ex: { nome: "...", cnpj: "..." }
     return apiClient.post("/fornecedores", data);
   },
   deleteFornecedor(id) {
     return apiClient.delete(`/fornecedores/${id}`);
   },
   getProdutos(filters = null) {
-    // filters pode ser um objeto, ex: { params: { 'filter-nome': 'ilike.Cerveja' } }
     return apiClient.get("/produtos", filters);
   },
   getProdutosComerciais(filters = null) {
-    // filters pode ser um objeto, ex: { params: { 'filter-nome': 'ilike.Cerveja' } }
     return apiClient.get("/produtos/comercial", filters);
   },
   getOfertas(filters = null) {
@@ -46,7 +43,6 @@ export default {
   deleteByEndpoint(endpoint) {
     return apiClient.delete(endpoint);
   },
-  // --- FUNCIONÁRIOS ---
   getFuncionarios(filters = null) {
     return apiClient.get("/funcionarios", filters);
   },
@@ -56,49 +52,41 @@ export default {
   deleteFuncionario(id) {
     return apiClient.delete(`/funcionarios/${id}`);
   },
-  // --- PRODUTOS ESTRUTURAIS ---
   getProdutosEstruturais(filters = null) {
     return apiClient.get("/produtos/estrutural", filters);
   },
-  // A criação de produto é genérica (estrutural ou comercial)
   createProduto(data) {
     return apiClient.post("/produtos", data);
   },
   createVenda(data) {
-    // data: { id_cliente, id_funcionario, tipo_pagamento, ... }
     return apiClient.post("/vendas", data);
   },
-  // O backend espera que criemos os itens associados à venda
   createItemVenda(data) {
-    // data: { id_venda, id_produto, id_lote (opcional dependendo da lógica), quantidade, valor_unitario }
     return apiClient.post("/item_venda", data);
   },
-  // Auxiliar para buscar lote disponível (Lógica FIFO necessária para o item_venda)
-  // Nota: Se o seu backend não faz isso automático, o front precisa descobrir o lote.
-  // Vou assumir por enquanto que vamos listar lotes ou pegar o primeiro disponível.
   getLotesPorProduto(idProduto) {
     return apiClient.get(`/lotes/produtos/${idProduto}`);
   },
-  // --- VENDAS & HISTÓRICO ---
   getVendas(filters = null) {
     return apiClient.get("/vendas", filters);
   },
-
-  // Para buscar os itens de uma venda específica
   getItemVenda(filters = null) {
-    // Exemplo de uso: { params: { 'filter-id_venda': 'eq.1' } }
     return apiClient.get("/item_venda", filters);
   },
-  // Necessário para descobrir o nome do produto a partir do item vendido (que só tem id_lote)
   getLote(id) {
     return apiClient.get(`/lotes/${id}`);
+  },
+  createOferta(data) {
+    return apiClient.post("/ofertas", data);
+  },
+  deleteByEndpoint(endpoint) {
+    return apiClient.delete(endpoint);
   },
 
   getLotes(filters = null) {
     return apiClient.get("/lotes", { params: filters });
   },
   createLote(data) {
-    // data espera: { id_fornecedor, id_produto, data_fornecimento, validade, preco_unitario, quantidade_inicial, estragados }
     return apiClient.post("/lotes", data);
   },
   deleteLote(id) {
@@ -109,6 +97,9 @@ export default {
   },
   getClientes(filters = null) {
     return apiClient.get("/clientes");
+  },
+  getClienteSaldo(id) {
+    return apiClient.get(`/clientes/${id}/saldo`);
   },
   createCliente(data) {
     return apiClient.post("/clientes", data);
@@ -130,5 +121,17 @@ export default {
   updateVenda(id, data) {
     // data deve conter todos os campos: id_cliente, id_funcionario, datas, etc.
     return apiClient.put(`/vendas/${id}`, data);
+  },
+  updateProdutoComercial(id, data) {
+    return apiClient.put(`/produtos/comercial/${id}`, data);
+  },
+  updateFuncionario(id, data) {
+    return apiClient.put(`/funcionarios/${id}`, data);
+  },
+  updateProduto(id, data) {
+    return apiClient.put(`/produtos/${id}`, data);
+  },
+  updateLote(id, data) {
+    return apiClient.put(`/lotes/${id}`, data);
   },
 };
