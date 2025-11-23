@@ -135,7 +135,6 @@ const salvar = () => {
 .form-row {
   display: flex;
   gap: 15px;
-  /* Garante que a linha não exceda o tamanho do pai */
   width: 100%; 
 }
 
@@ -144,7 +143,6 @@ const salvar = () => {
   display: flex;
   flex-direction: column;
   gap: 5px;
-  /* IMPORTANTE: Permite que o flex item encolha se necessário, evitando estouro */
   min-width: 0; 
 }
 

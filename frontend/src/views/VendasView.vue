@@ -225,6 +225,7 @@ const selecionarVendaHistorico = async (venda) => {
 const iniciarCadastroCliente = () => {
     clienteSelecionado.value = null;
     isCreatingClient.value = true;
+    isEditing.value = false;
     Object.assign(formCliente, { nome: "", cpf: "", data_nascimento: "" });
 };
 
@@ -676,12 +677,6 @@ const formatarData = (isoStr) =>
                                     title="Clique para pagar"
                                 >
                                     {{ v.tipo_pagamento }}
-                                    <span
-                                        v-if="v.tipo_pagamento === 'fiado'"
-                                        style="font-size: 0.7rem"
-                                    >
-                                        (Pagar)</span
-                                    >
                                 </span>
 
                                 <span class="col-price"
@@ -702,7 +697,7 @@ const formatarData = (isoStr) =>
 
                 <div class="receipt-total" v-if="!isCreatingClient">
                     <template v-if="modo !== 'clientes'">
-                        <span>TOTAL</span>
+                        <span>TOTAL:</span>
                         <span class="big-price"
                             >R$ {{ totalVenda.toFixed(2) }}</span
                         >
@@ -730,7 +725,7 @@ const formatarData = (isoStr) =>
                     class="btn-fab"
                     @click="salvarCliente"
                 >
-                    {{ isEditing ? "✎" : "✓" }}
+                    {{ isEditing ? "✓" : "+" }}
                 </button>
             </div>
         </div>
@@ -795,16 +790,16 @@ const formatarData = (isoStr) =>
                     </div>
 
                     <div class="sale-right">
-                        <div class="action-buttons">
+                        <div class="card-actions">
                             <button
-                                class="btn-icon btn-edit"
+                                class="btn-icon-edit"
                                 @click.stop="iniciarEdicaoCliente(c)"
                                 title="Editar"
                             >
-                                ✎
+                                ✏️
                             </button>
                             <button
-                                class="btn-icon btn-del"
+                                class="btn-icon-delete"
                                 @click.stop="deletarCliente(c.id)"
                                 title="Excluir"
                             >
@@ -845,7 +840,7 @@ const formatarData = (isoStr) =>
 
 .vendas-layout {
     display: flex;
-    height: calc(100vh - 16vh);
+    height: calc(100vh - 16.5vh);
     background-color: var(--edna-black);
     overflow: hidden;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -880,23 +875,22 @@ const formatarData = (isoStr) =>
 .tabs button.active {
     color: var(--edna-yellow);
     border-bottom-color: var(--edna-yellow);
-    font-weight: bold;
+    border-radius: 0px;
 }
 
 /* --- PAINEL ESQUERDO --- */
 .panel-left {
-    width: 380px;
+    width: 30vw;
     min-width: 350px;
     padding: 20px;
     background-color: var(--edna-dark-gray);
-    border-right: 1px solid var(--edna-gray);
     display: flex;
     flex-direction: column;
 }
 
 .receipt-paper {
     background-color: var(--edna-gray);
-    border: 1px solid var(--edna-yellow);
+    border: 2px solid var(--edna-yellow);
     border-radius: 12px;
     height: 100%;
     display: flex;
@@ -907,8 +901,7 @@ const formatarData = (isoStr) =>
 }
 
 .receipt-readonly {
-    border-color: var(--edna-light-gray);
-    border-style: dashed;
+    border: 2px dashed var(--edna-light-gray);
     opacity: 0.9;
 }
 
@@ -919,8 +912,8 @@ const formatarData = (isoStr) =>
     font-size: 1.5rem;
     margin-top: 0;
     margin-bottom: 20px;
-    border-bottom: 1px dashed var(--edna-light-gray);
-    padding-bottom: 15px;
+    border-bottom: 2px solid var(--edna-light-gray);
+    padding-bottom: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 2px;
 }
@@ -928,49 +921,48 @@ const formatarData = (isoStr) =>
 .form-stack {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 0.5rem;
 }
 .row {
     display: flex;
-    gap: 10px;
+    gap: 0.5rem;
 }
 .grow {
     flex: 1;
 }
 .form-group label {
     display: block;
-    font-size: 0.8rem;
+    font-size: 1rem;
     color: var(--edna-light-gray);
     margin-bottom: 5px;
 }
 
 select {
     width: 100%;
-    background-color: var(--edna-black);
+    background-color: var(--edna-gray);
     color: var(--edna-white);
-    border: 1px solid var(--edna-gray);
+    border: 2px solid var(--edna-black);
     padding: 10px;
     border-radius: 6px;
     outline: none;
     box-sizing: border-box;
 }
 select:focus {
-    border-color: var(--edna-yellow);
+    border-color: var(--edna-orange);
 }
 
 .input-dark {
     width: 100%;
-    background-color: var(--edna-black);
+    background-color: var(--edna-dark-gray);
     color: var(--edna-white);
-    border: 1px solid var(--edna-gray);
+    border: 2px solid var(--edna-gray);
     padding: 10px;
     border-radius: 6px;
     outline: none;
     box-sizing: border-box;
-    font-family: "Segoe UI", sans-serif;
 }
 .input-dark:focus {
-    border-color: var(--edna-yellow);
+    border-color: var(--edna-orange);
 }
 
 .info-static p {
@@ -987,23 +979,20 @@ select:focus {
 
 .msg-empty {
     text-align: center;
-    color: var(--edna-light-gray);
-    margin-top: 50px;
-    font-style: italic;
+    color: var(--edna-white);
+    margin-top: 1rem;
 }
 .msg-empty-small {
     text-align: center;
     color: var(--edna-light-gray);
     margin-top: 10px;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
 }
 
 /* Tabela */
 .receipt-items {
     flex: 1;
     margin: 20px 0;
-    border-top: 2px solid var(--edna-black);
-    border-bottom: 2px solid var(--edna-black);
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: 4px;
     padding: 10px;
@@ -1015,9 +1004,8 @@ select:focus {
 .items-head {
     display: flex;
     font-size: 0.85rem;
-    color: var(--edna-yellow);
     padding-bottom: 8px;
-    border-bottom: 1px solid var(--edna-gray);
+    border-bottom: 2px solid var(--edna-gray);
     font-weight: bold;
     text-transform: uppercase;
     justify-content: space-between;
@@ -1034,16 +1022,20 @@ select:focus {
 .item-row {
     display: flex;
     font-size: 0.95rem;
+    justify-content: space-between;
+    align-items: center;
     padding: 6px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
+
 .item-row:hover {
     background-color: rgba(255, 255, 255, 0.05);
 }
 
 .col-qtd {
-    width: 40px;
-    text-align: center;
+    width: 90px;
+    text-align: left;
+    padding-left: 10px;
     color: var(--edna-blue);
     font-weight: bold;
 }
@@ -1054,13 +1046,14 @@ select:focus {
 }
 .col-name {
     flex: 1;
-    white-space: nowrap;
+    white-space: wrap;
     overflow: hidden;
+    text-align: center;
     text-overflow: ellipsis;
     padding: 0 10px;
 }
 .col-price {
-    width: 80px;
+    width: 100px;
     text-align: right;
     color: var(--edna-green);
 }
@@ -1068,52 +1061,44 @@ select:focus {
 /* Total */
 .receipt-total {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     margin-top: auto;
     padding-top: 15px;
 }
 .receipt-total span:first-child {
+    padding-right: 1rem;
     font-size: 1.2rem;
     color: var(--edna-light-gray);
 }
 .big-price {
     color: var(--edna-green);
     font-weight: bold;
-    font-size: 2rem;
-    text-shadow: 0 0 5px rgba(90, 211, 176, 0.2);
+    font-size: 1.5rem;
 }
 .debt {
-    color: var(--edna-orange);
-    text-shadow: 0 0 5px rgba(244, 113, 110, 0.2);
+    color: var(--edna-red);
 }
 
 /* Botão Fab */
 .btn-fab {
     position: absolute;
-    bottom: -25px;
-    left: 50%;
+    bottom: 0.5rem;
+    right: -0.5rem;
     transform: translateX(-50%);
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
+    width: 3rem;
+    aspect-ratio: 1;
+    border-radius: 10px;
     background-color: var(--edna-green);
-    color: var(--edna-black);
-    font-size: 2.5rem;
-    border: 4px solid var(--edna-dark-gray);
+    color: var(--edna-gray);
+    font-size: 2rem;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    transition:
-        transform 0.2s,
-        background-color 0.2s;
-    padding-bottom: 6px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition-duration: 0.2s;
 }
 .btn-fab:hover {
-    transform: translateX(-50%) scale(1.1);
-    background-color: var(--edna-white);
+    transform: translateX(-50%) scale(1.05);
+    filter: brightness(1.15);
 }
 
 /* --- PAINEL DIREITO --- */
@@ -1126,7 +1111,7 @@ select:focus {
 
 .catalog-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
 }
 
@@ -1139,7 +1124,7 @@ select:focus {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 140px;
+    height: 6rem;
     transition: all 0.2s;
     border-left: 4px solid var(--edna-blue);
 }
@@ -1153,7 +1138,6 @@ select:focus {
     flex-direction: column;
 }
 .prod-name {
-    font-weight: bold;
     font-size: 1.1rem;
     color: var(--edna-white);
     margin-bottom: 5px;
@@ -1163,14 +1147,13 @@ select:focus {
     color: var(--edna-light-gray);
     text-transform: uppercase;
     background-color: var(--edna-black);
-    padding: 2px 6px;
+    padding: 4px 6px;
     border-radius: 4px;
     align-self: flex-start;
 }
 .prod-price {
     align-self: flex-end;
     color: var(--edna-green);
-    font-weight: bold;
     font-size: 1.2rem;
 }
 
@@ -1194,10 +1177,11 @@ select:focus {
 }
 .card-sale:hover {
     background-color: var(--edna-gray);
+    border-left-color: var(--edna-white);
 }
 .card-sale.active {
     border-left-color: var(--edna-yellow);
-    background-color: #3d3d4d;
+    background-color: var(--edna-gray);
     border-color: var(--edna-yellow);
 }
 .card-cliente {
@@ -1205,14 +1189,14 @@ select:focus {
 }
 
 .new-client-card {
-    border-style: dashed;
-    border-color: var(--edna-light-gray);
+    border: 2px dashed var(--edna-light-gray);
     opacity: 0.8;
     justify-content: center;
+    transition-duration: 0.5s;
 }
 .new-client-card:hover {
     opacity: 1;
-    border-color: var(--edna-green);
+    border: 2px solid var(--edna-green);
     background-color: rgba(90, 211, 176, 0.1);
 }
 
@@ -1247,17 +1231,23 @@ select:focus {
     color: var(--edna-light-gray);
     font-size: 0.85rem;
 }
-.sale-tag {
-    background-color: var(--edna-black);
-    color: var(--edna-blue);
+.card-sale .sale-right .sale-tag {
+    background-color: var(--edna-yellow);
+    color: var(--edna-dark-gray);
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 0.8rem;
     text-transform: uppercase;
     font-weight: bold;
 }
+
+.card-cliente .sale-right .sale-tag {
+    background-color: var(--edna-blue);
+    color: var(--edna-dark-gray);
+}
+
 .fiado-tag {
-    color: var(--edna-orange);
+    color: var(--edna-red);
     font-weight: bold;
     cursor: pointer;
     text-decoration: underline;
@@ -1269,6 +1259,43 @@ select:focus {
     background-color: rgba(255, 255, 255, 0.1);
     border-radius: 4px;
     padding: 0 4px;
+}
+
+.btn-icon-delete {
+    background: none;
+    color: var(--edna-red);
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    opacity: 0.7;
+    padding: 5px;
+    transition: opacity 0.2s;
+}
+.btn-icon-delete:hover {
+    transform: scale(1.2);
+    opacity: 1;
+}
+
+.card-actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-icon-edit {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: transform 0.2s, opacity 0.2s;
+    filter: grayscale(100%); 
+}
+
+.btn-icon-edit:hover {
+    opacity: 1;
+    transform: scale(1.2);
+    filter: none;
 }
 
 ::-webkit-scrollbar {
