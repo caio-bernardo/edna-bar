@@ -38,6 +38,7 @@
     width: 100vw;
     border: 0px;
     margin: 1rem 0rem;
+    z-index: 100; /* ADICIONADO: Garante que o menu fique sobre o banner da Home */
 }
 .nav-brand {
     font-weight: bold;
@@ -55,6 +56,8 @@
     text-decoration: none;
     font-weight: 500;
 }
+/* Ajuste para garantir leitura em fundos escuros/banners se necessário,
+   mas mantendo a lógica original */
 .nav-links a:hover,
 .nav-links a.router-link-active {
     color: var(--edna-yellow);
