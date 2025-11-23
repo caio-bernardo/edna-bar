@@ -115,5 +115,8 @@ export default {
   },
   updateProdutoComercial(id, data) {
     return apiClient.put(`/produtos/comercial/${id}`, data);
-},
+  },
+  updateFuncionario(id, data) {
+    return apiClient.put(`/funcionarios/${id}`, data);
+  },
 };

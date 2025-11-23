@@ -1,11 +1,16 @@
 <script setup>
 import { ref, onMounted, reactive } from 'vue';
 import api from '@/services/api';
+import EditFuncionarioModal from '@/components/EditFuncionarioModal.vue';
 
 // --- ESTADO ---
 const funcionarios = ref([]);
 const itensEstrutura = ref([]);
 const carregando = ref(false);
+
+// Estados do Modal de Edição
+const showEditModal = ref(false);
+const funcionarioParaEditar = ref({});
 
 // Formulário Funcionário (Baseado no Model do Swagger/Go)
 const formFuncionario = reactive({
@@ -89,6 +94,21 @@ const salvarItem = async () => {
   }
 };
 
+const abrirEdicao = (func) => {
+  funcionarioParaEditar.value = { ...func }; // Clona o objeto
+  showEditModal.value = true;
+};
+
+const salvarEdicao = async (dadosAtualizados) => {
+  try {
+    await api.updateFuncionario(dadosAtualizados.id, dadosAtualizados);
+    showEditModal.value = false;
+    await carregarDados();
+  } catch (error) {
+    alert("Erro ao atualizar funcionário: " + (error.response?.data?.detail || error.message));
+  }
+};
+
 const deletar = async (contexto, id) => {
   if(!confirm("Remover este registro?")) return;
   try {
@@ -113,6 +133,13 @@ onMounted(() => {
       <div class="panel-header">
         <h2>Funcionários</h2>
       </div>
+
+      <EditFuncionarioModal 
+      :visible="showEditModal" 
+      :funcionario="funcionarioParaEditar"
+      @close="showEditModal = false"
+      @save="salvarEdicao"
+      />
 
       <div class="form-row">
         <input v-model="formFuncionario.nome" placeholder="Nome Completo" />
@@ -158,7 +185,10 @@ onMounted(() => {
               <td>{{ func.expediente }}</td>
               <td class="money">R$ {{ func.salario.toFixed(2) }}</td>
               <td>
-                <button @click="deletar('func', func.id)" class="btn-delete">Excluir</button>
+                <div class="action-group">
+                  <button @click="abrirEdicao(func)" class="btn-edit" title="Editar">✏️</button>
+                  <button @click="deletar('func', func.id)" class="btn-delete">Excluir</button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -388,9 +418,43 @@ tr:hover td {
     font-weight: bold;
 }
 
+.action-group {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-edit {
+  background: transparent;
+  border: 1px solid var(--edna-blue);
+  color: var(--edna-blue);
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-edit:hover {
+  background-color: var(--edna-blue);
+  color: var(--edna-black);
+}
+
+.btn-delete {
+    background-color: transparent;
+    border: 1px solid var(--edna-red);
+    color: var(--edna-red);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
 .btn-delete:hover {
-    background-color: var(--edna-red);
-    color: var(--edna-dark-gray);
+  background-color: var(--edna-red);
+  color: var(--edna-dark-gray);
 }
 
 /* --- GRID DE ITENS (Cards) --- */
