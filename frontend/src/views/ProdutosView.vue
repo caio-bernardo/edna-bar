@@ -165,7 +165,10 @@ const salvarEdicao = async (dadosAtualizados) => {
         showEditModal.value = false; // Fecha modal
         await carregarDados(); // Atualiza lista
     } catch (error) {
-        alert("Erro ao atualizar produto: " + (error.response?.data?.detail || error.message));
+        alert(
+            "Erro ao atualizar produto: " +
+                (error.response?.data?.detail || error.message),
+        );
     }
 };
 
@@ -180,11 +183,11 @@ onMounted(() => {
     <div class="comercial-container">
         <h1 class="page-title">Comercial</h1>
 
-        <EditProdutoModal 
-            :visible="showEditModal" 
-            :produto="produtoParaEditar" 
-            @close="showEditModal = false" 
-            @save="salvarEdicao" 
+        <EditProdutoModal
+            :visible="showEditModal"
+            :produto="produtoParaEditar"
+            @close="showEditModal = false"
+            @save="salvarEdicao"
         />
 
         <div class="content-grid">
@@ -256,10 +259,18 @@ onMounted(() => {
                             </div>
                         </div>
                         <div class="card-actions">
-                            <button @click="abrirEdicao(prod)" class="btn-icon-edit" title="Editar">
+                            <button
+                                @click="abrirEdicao(prod)"
+                                class="btn-icon-edit"
+                                title="Editar"
+                            >
                                 ✏️
                             </button>
-                            <button @click="deletarItem('produto', prod.id)" class="btn-icon-delete" title="Excluir">
+                            <button
+                                @click="deletarItem('produto', prod.id)"
+                                class="btn-icon-delete"
+                                title="Excluir"
+                            >
                                 ×
                             </button>
                         </div>
@@ -457,7 +468,6 @@ select {
     outline: none;
 }
 
-
 /* Estilo do form inline (Produtos) */
 .form-inline {
     display: flex;
@@ -466,9 +476,9 @@ select {
     flex-wrap: wrap;
 }
 .form-inline input {
-  flex: 1;
-  width: auto;
-  min-width: 80px;
+    flex: 1;
+    width: auto;
+    min-width: 80px;
 }
 
 /* Estilo do form stack (Ofertas) */
@@ -533,7 +543,7 @@ button:hover {
 }
 
 .card-item:hover {
-  border-color: var(--edna-light-gray);
+    border-color: var(--edna-light-gray);
 }
 
 /* --- CARDS (PRODUTOS) --- */
@@ -561,12 +571,12 @@ button:hover {
 }
 
 .marca-tag {
-  font-size: 0.8rem;
-  color: var(--edna-light-gray);
-  text-transform: uppercase;
-  background: var(--edna-black);
-  padding: 2px 6px;
-  border-radius: 4px;
+    font-size: 0.8rem;
+    color: var(--edna-light-gray);
+    text-transform: uppercase;
+    background: var(--edna-black);
+    padding: 2px 6px;
+    border-radius: 4px;
 }
 
 .card-details {
@@ -613,8 +623,10 @@ button:hover {
     font-size: 1rem;
     cursor: pointer;
     opacity: 0.7;
-    transition: transform 0.2s, opacity 0.2s;
-    filter: grayscale(100%); 
+    transition:
+        transform 0.2s,
+        opacity 0.2s;
+    filter: grayscale(100%);
 }
 
 .btn-icon-edit:hover {
