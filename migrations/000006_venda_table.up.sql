@@ -1,5 +1,6 @@
 DROP TYPE IF EXISTS tipo_de_pagamento;
-CREATE TYPE tipo_de_pagamento AS ENUM ('credito', 'debito', 'pix', 'dinheiro', 'VA/VR');
+-- Adicione 'fiado' na lista abaixo
+CREATE TYPE tipo_de_pagamento AS ENUM ('credito', 'debito', 'pix', 'dinheiro', 'VA/VR', 'fiado');
 
 CREATE TABLE IF NOT EXISTS Venda (
     id_venda serial PRIMARY KEY,
@@ -10,6 +11,6 @@ CREATE TABLE IF NOT EXISTS Venda (
     id_cliente int NOT NULL,
     id_funcionario int NOT NULL,
 
-    FOREIGN KEY (id_cliente) REFERENCES Cliente(id_cliente) ON DELETE RESTRICT,
+    FOREIGN KEY (id_cliente) REFERENCES Cliente(id_cliente) ON DELETE CASCADE,
     FOREIGN KEY (id_funcionario) REFERENCES Funcionario(id_funcionario) ON DELETE SET NULL
 );
