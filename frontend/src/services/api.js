@@ -100,19 +100,33 @@ export default {
 
   // todo: organize
   createOferta(data) {
-      return apiClient.post('/ofertas', data);
+    return apiClient.post("/ofertas", data);
   },
   deleteByEndpoint(endpoint) {
-      return apiClient.delete(endpoint);
+    return apiClient.delete(endpoint);
   },
   getLotes(filters = null) {
-      return apiClient.get('/lotes', { params: filters });
+    return apiClient.get("/lotes", { params: filters });
   },
   createLote(data) {
-      // data espera: { id_fornecedor, id_produto, data_fornecimento, validade, preco_unitario, quantidade_inicial, estragados }
-      return apiClient.post('/lotes', data);
+    // data espera: { id_fornecedor, id_produto, data_fornecimento, validade, preco_unitario, quantidade_inicial, estragados }
+    return apiClient.post("/lotes", data);
   },
   deleteLote(id) {
+    return apiClient.delete(`/lotes/${id}`);
+  },
+  getClienteSaldo(id) {
+    return apiClient.get(`/clientes/${id}/saldo`);
+  },
+  getClientes(filters = null) {
+    return apiClient.get("/clientes");
+  },
+  getClienteSaldo(id) {
+    return apiClient.get(`/clientes/${id}/saldo`);
+  },
+  // ADICIONE ISTO:
+  createCliente(data) {
+    return apiClient.post("/clientes", data);
       return apiClient.delete(`/lotes/${id}`);
   },
   getFinancialReport(params) {
