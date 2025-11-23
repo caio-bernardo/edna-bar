@@ -127,5 +127,12 @@ export default {
   // ADICIONE ISTO:
   createCliente(data) {
     return apiClient.post("/clientes", data);
+      return apiClient.delete(`/lotes/${id}`);
+  },
+  getFinancialReport(params) {
+    return apiClient.get('/relatorios/financeiro', { params });
+  },
+  getPayrollReport(params) {
+    return apiClient.get('/relatorios/folha-pagamento', { params });
   },
 };
