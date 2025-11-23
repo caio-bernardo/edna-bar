@@ -1,5 +1,92 @@
 <script setup>
-// Nenhuma lógica de script necessária por enquanto
+import { ref } from "vue";
+
+// Controle do Modal
+const showModal = ref(false);
+const selectedTopic = ref(null);
+
+// Dados detalhados para cada seção
+const guideDetails = {
+    financeiro: {
+        title: "Financeiro",
+        icon: "💰",
+        content: `
+      O módulo financeiro é o coração da gestão do bar. Aqui você pode:
+      <ul style="margin-top: 10px; margin-left: 20px; line-height: 1.6;">
+        <li>Acompanhar o <strong>Fluxo de Caixa</strong> mensal com gráficos intuitivos.</li>
+        <li>Visualizar o total de <strong>Entradas</strong> (Vendas) e <strong>Saídas</strong> (Despesas com estoque e folha de pagamento).</li>
+        <li>Analisar o <strong>Lucro Líquido</strong> real do estabelecimento.</li>
+        <li>Filtrar relatórios por períodos específicos para tomadas de decisão.</li>
+      </ul>
+    `,
+    },
+    produtos: {
+        title: "Produtos",
+        icon: "🍺",
+        content: `
+      Gerencie todo o seu catálogo de itens. O sistema divide produtos em duas categorias:
+      <ul style="margin-top: 10px; margin-left: 20px; line-height: 1.6;">
+        <li><strong>Comerciais:</strong> Itens destinados à venda direta (Cervejas, Porções, Drinks). Você define o preço de venda aqui.</li>
+        <li><strong>Estruturais:</strong> Insumos e materiais de uso interno (Copos, Guardanapos, Produtos de Limpeza).</li>
+      </ul>
+      Você também pode criar e gerenciar <strong>Ofertas e Combos</strong> promocionais nesta seção.
+    `,
+    },
+    vendas: {
+        title: "Vendas (PDV)",
+        icon: "🧾",
+        content: `
+      A frente de caixa (Ponto de Venda) foi desenhada para agilidade:
+      <ul style="margin-top: 10px; margin-left: 20px; line-height: 1.6;">
+        <li><strong>Nova Venda:</strong> Selecione o cliente, o funcionário atendente e adicione produtos ao carrinho.</li>
+        <li><strong>Controle de Estoque:</strong> A venda baixa automaticamente o estoque do lote mais antigo (FIFO).</li>
+        <li><strong>Histórico:</strong> Consulte todas as vendas realizadas, filtre por data e veja detalhes dos itens vendidos.</li>
+      </ul>
+    `,
+    },
+    fornecedores: {
+        title: "Fornecedores & Estoque",
+        icon: "🚚",
+        content: `
+      Mantenha o controle da cadeia de suprimentos:
+      <ul style="margin-top: 10px; margin-left: 20px; line-height: 1.6;">
+        <li>Cadastre empresas parceiras com CNPJ e dados de contato.</li>
+        <li><strong>Entrada de Lotes:</strong> Ao comprar produtos, você registra um novo lote vinculado a um fornecedor.</li>
+        <li>Controle a <strong>validade</strong> e o preço de custo de cada lote individualmente.</li>
+        <li>Monitore perdas registrando itens estragados ou avariados.</li>
+      </ul>
+    `,
+    },
+    funcionarios: {
+        title: "Funcionários",
+        icon: "👥",
+        content: `
+      Gestão completa da equipe do bar:
+      <ul style="margin-top: 10px; margin-left: 20px; line-height: 1.6;">
+        <li>Cadastre garçons, caixas, seguranças e equipe de limpeza.</li>
+        <li>Defina salários, turnos (expediente) e datas de contratação.</li>
+        <li>Estes dados são cruzados automaticamente com o Financeiro para cálculo da folha de pagamento mensal.</li>
+      </ul>
+    `,
+    },
+    clientes: {
+        title: "Clientes",
+        icon: "🍻", // Ícone ajustado para diferenciar de funcionários
+        content: `
+      Fidelize seus clientes e gerencie o crédito da casa:
+      <ul style="margin-top: 10px; margin-left: 20px; line-height: 1.6;">
+        <li>Cadastre clientes regulares para agilizar o atendimento.</li>
+        <li><strong>Sistema de Fiado:</strong> Permite realizar vendas sem pagamento imediato.</li>
+        <li><strong>Extrato de Dívidas:</strong> Visualize o saldo devedor de cada cliente e realize a quitação total ou parcial das dívidas através do histórico.</li>
+      </ul>
+    `,
+    },
+};
+
+const openGuide = (key) => {
+    selectedTopic.value = guideDetails[key];
+    showModal.value = true;
+};
 </script>
 
 <template>
@@ -10,7 +97,6 @@
                 src="/home_banner.png"
                 alt="Banner EDNA Bar"
             />
-
             <div class="scroll-indicator">
                 <p>Role para saber mais</p>
                 <span class="arrow">▼</span>
@@ -25,8 +111,6 @@
                     O E.D.N.A é um sistema integrado de gerenciamento para
                     bares, focado em otimizar o controle de estoque, fluxo de
                     caixa e o relacionamento com clientes e fornecedores.
-                    Desenvolvido para trazer modernidade e eficiência para o seu
-                    estabelecimento.
                 </p>
             </section>
 
@@ -34,52 +118,46 @@
 
             <section class="tutorial-section">
                 <h2>Como Utilizar o Sistema</h2>
+                <p class="hint-text">Clique nos cartões para ver detalhes</p>
+
                 <div class="cards-grid">
-                    <div class="card-guide">
+                    <div class="card-guide" @click="openGuide('financeiro')">
                         <h3>💰 Financeiro</h3>
                         <p>
                             Visualize relatórios de lucros, despesas e projeções
-                            futuras. Acompanhe o desempenho mensal do bar.
+                            futuras.
                         </p>
                     </div>
 
-                    <div class="card-guide">
+                    <div class="card-guide" @click="openGuide('produtos')">
                         <h3>🍺 Produtos</h3>
                         <p>
-                            Gerencie seu cardápio. Adicione produtos comerciais
-                            (venda) e estruturais (insumos/mobília).
+                            Gerencie cardápio, itens comerciais e estruturais.
                         </p>
                     </div>
 
-                    <div class="card-guide">
+                    <div class="card-guide" @click="openGuide('vendas')">
                         <h3>🧾 Vendas</h3>
-                        <p>
-                            Realize vendas no balcão (PDV), gerencie comandas e
-                            visualize o histórico de transações.
-                        </p>
+                        <p>PDV ágil, histórico de transações e comandas.</p>
                     </div>
 
-                    <div class="card-guide">
+                    <div class="card-guide" @click="openGuide('fornecedores')">
                         <h3>🚚 Fornecedores</h3>
-                        <p>
-                            Cadastre seus parceiros de negócio e controle a
-                            entrada de novos lotes de estoque.
-                        </p>
+                        <p>Entrada de notas, gestão de lotes e parceiros.</p>
                     </div>
 
-                    <div class="card-guide">
+                    <div class="card-guide" @click="openGuide('funcionarios')">
                         <h3>👥 Funcionários</h3>
                         <p>
-                            Gerencie sua equipe, turnos, salários e funções
-                            dentro do estabelecimento.
+                            Gestão de equipe, cargos, turnos e folha salarial.
                         </p>
                     </div>
 
-                    <div class="card-guide">
-                        <h3>👥 Clientes</h3>
+                    <div class="card-guide" @click="openGuide('clientes')">
+                        <h3>🍻 Clientes</h3>
                         <p>
-                            Cadastre clientes fiéis, gerencie dívidas (fiado) e
-                            histórico de consumo.
+                            Cadastro de clientes, sistema de fiado e quitação de
+                            dívidas.
                         </p>
                     </div>
                 </div>
@@ -91,11 +169,33 @@
                 </p>
             </footer>
         </div>
+
+        <Transition name="fade">
+            <div
+                v-if="showModal"
+                class="modal-overlay"
+                @click.self="showModal = false"
+            >
+                <div class="modal-content">
+                    <header class="modal-header">
+                        <span class="modal-icon">{{ selectedTopic.icon }}</span>
+                        <h3>{{ selectedTopic.title }}</h3>
+                        <button class="close-btn" @click="showModal = false">
+                            ×
+                        </button>
+                    </header>
+                    <div
+                        class="modal-body"
+                        v-html="selectedTopic.content"
+                    ></div>
+                </div>
+            </div>
+        </Transition>
     </div>
 </template>
 
 <style scoped>
-/* Container Geral */
+/* ... (Estilos anteriores mantidos) ... */
 .home-container {
     display: flex;
     flex-direction: column;
@@ -103,7 +203,6 @@
     background-color: var(--edna-black);
 }
 
-/* --- Banner --- */
 .banner-wrapper {
     position: relative;
     width: 100%;
@@ -123,7 +222,6 @@
     z-index: 0;
 }
 
-/* Indicador de Scroll */
 .scroll-indicator {
     position: absolute;
     bottom: 20px;
@@ -147,7 +245,6 @@
     font-size: 1.5rem;
 }
 
-/* --- Corpo do Conteúdo --- */
 .content-body {
     background-color: var(--edna-black);
     color: var(--edna-white);
@@ -160,7 +257,6 @@
     padding-top: 60px;
 }
 
-/* Seção Sobre */
 .info-section {
     text-align: center;
     max-width: 800px;
@@ -195,7 +291,6 @@
     border-radius: 2px;
 }
 
-/* Seção Tutorial */
 .tutorial-section {
     width: 100%;
     text-align: center;
@@ -204,10 +299,17 @@
 .tutorial-section h2 {
     font-size: 2rem;
     color: var(--edna-white);
-    margin-bottom: 40px;
+    margin-bottom: 10px;
     border-bottom: 1px dashed var(--edna-gray);
     display: inline-block;
     padding-bottom: 10px;
+}
+
+.hint-text {
+    color: var(--edna-light-gray);
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+    font-style: italic;
 }
 
 .cards-grid {
@@ -223,14 +325,17 @@
     border-radius: 12px;
     border: 1px solid var(--edna-gray);
     transition:
-        transform 0.3s,
-        border-color 0.3s;
+        transform 0.2s,
+        border-color 0.2s,
+        background-color 0.2s;
     text-align: left;
+    cursor: pointer; /* Indica que é clicável */
 }
 
 .card-guide:hover {
     transform: translateY(-5px);
     border-color: var(--edna-yellow);
+    background-color: #353540; /* Leve destaque no fundo */
 }
 
 .card-guide h3 {
@@ -248,7 +353,6 @@
     line-height: 1.4;
 }
 
-/* Footer */
 .home-footer {
     margin-top: 80px;
     color: var(--edna-gray);
@@ -256,7 +360,6 @@
     text-align: center;
 }
 
-/* Animação da Seta */
 @keyframes bounce {
     0%,
     20%,
@@ -271,6 +374,93 @@
     60% {
         transform: translateX(-50%) translateY(-5px);
     }
+}
+
+/* --- ESTILOS DO MODAL --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(3px);
+}
+
+.modal-content {
+    background-color: var(--edna-dark-gray);
+    width: 90%;
+    max-width: 600px;
+    border-radius: 16px;
+    border: 1px solid var(--edna-yellow);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    animation: slideUp 0.3s ease-out;
+}
+
+.modal-header {
+    background-color: var(--edna-black);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 1px solid var(--edna-gray);
+}
+
+.modal-icon {
+    font-size: 2rem;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: var(--edna-yellow);
+    flex-grow: 1;
+    font-size: 1.5rem;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: var(--edna-light-gray);
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    color: var(--edna-red);
+}
+
+.modal-body {
+    padding: 30px;
+    color: var(--edna-white);
+    font-size: 1.1rem;
+}
+
+/* Animações do Modal */
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
 }
 
 /* Responsividade */
