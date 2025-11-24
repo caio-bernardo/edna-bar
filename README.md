@@ -25,7 +25,20 @@ A API _backend_ foi criada utilizando a linguagem **Go** (1.24). O servidor HTTP
 
 ## Como rodar
 
-### Backend
+### Utilizando o Docker (Produção)
+
+Antes de mais nada tenha o Docker instalado com Docker Compose. 
+Configure as variáveis de ambiente em um arquivo `.env` seguindo os exemplos em `.env.example`.
+
+Inicie os containers com o comando `docker compose up -d`. Popule a base de dados rodando as migrações com o script: `./migrate.sh up`.
+ 
+Feito isso, acesse o frontend através do endereço `http://localhost:80` e o backend em `http://localhost:80/api` ou `http://localhost:8080`.
+
+> Atenção, esse modo foi pensando para ser rodado em produção. Confira a próxima seção para saber como desenvolver esse projeto.
+
+### Em desenvolvimento
+
+#### Backend
 Configure as variáveis de ambiente em um arquivo `.env` seguindo os exemplos em `.env.example`.
 
 Primeiro, instale a versão `1.24` da linguagem Go, a versão mais recente do Docker e Docker-compose. Em adendo para realizar as migrações é preciso instalar o `go-migrate`, você pode fazer isso com:
@@ -37,7 +50,7 @@ Inicie a base de dados com `make docker-run` (use `sudo` se necessário). Vá pa
 
 Por último rode projeto com `make run`. Para rodar com _hot reloading_ (alterações serão refletidas instantâneamente) use `make watch`.
 
-### Frontend
+#### Frontend
 
 Entre na pasta `frontend` com `cd frontend`. Instale as dependências necessárias com `npm install` e rode no modo de desenvolvimento com `npm run dev`.
 

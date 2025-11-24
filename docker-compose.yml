@@ -3,6 +3,8 @@ services:
     image: postgres:alpine
     container_name: edna-database
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: ${DB_DATABASE}
       POSTGRES_USER: ${DB_USERNAME}
@@ -11,6 +13,34 @@ services:
       - "${DB_PORT}:5432"
     volumes:
       - psql_volume_bp:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    container_name: edna-bar-backend
+    ports:
+      - 8080:8080
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      - database
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: runner
+    container_name: edna-frontend
+    ports:
+      - "80:80"
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      - backend
 
 volumes:
   psql_volume_bp:

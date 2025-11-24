@@ -53,7 +53,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	// Register routes
 	v1.HandleFunc("/", s.trailingSlashHandler)
-	v1.Handle("/api/v1/", http.StripPrefix("/api/v1", mux))
+	v1.Handle("/v1/", http.StripPrefix("/v1", mux))
 	v1.Handle("/swagger/", httpSwagger.Handler())
 	// Wrap the mux with CORS middleware
 	return s.logMiddleware(s.corsMiddleware(v1))

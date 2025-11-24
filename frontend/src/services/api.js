@@ -1,9 +1,13 @@
 // src/services/api.js
 import axios from "axios";
-
 // Cria uma instância do axios que já aponta para o seu back-end
+// Usa a variável de ambiente BACKEND_BASE_URL quando disponível, com fallback para http://localhost/api/v1
+const baseURL =
+  process.env.BACKEND_BASE_URL ||
+  "http://localhost/api/v1";
+
 const apiClient = axios.create({
-  baseURL: "http://localhost:8080/api/v1", // O BasePath que definimos!
+  baseURL, // O BasePath que definimos!
   headers: {
     "Content-Type": "application/json",
   },
