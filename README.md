@@ -1,3 +1,6 @@
+<img width="100%" height="360px" alt="home_banner" src="https://github.com/user-attachments/assets/eeddc485-bf9a-4fc1-9600-8b438dd0bb98" />
+
+
 # E.D.N.A - Ecossistema D. Negociação Alcoólica
 
 Sistema de banco de dados de Bar. Gerencie produtos, atendimentos e outras atividades do seu bar com nosso sistema.
@@ -72,3 +75,7 @@ A ferramenta de migrações utilizada é o [go-migrate](https://github.com/golan
 Segue um Diagrama Entidade Relacionamento da Aplicação em Banco de Dados.
 
 ![Diagrama Entidade-Relacionamento do Sistema EDNA bar](assets/E.D.N.A_conceitual_1.png)
+
+## Licensa
+
+Esse projeto está sob a [GNU General Public License v3.0](https://spdx.org/licenses/GPL-3.0-or-later.html). O uso e distribuição é permitido desde que siga as restrições impostas pela [LICENSA](./LICENSE).
