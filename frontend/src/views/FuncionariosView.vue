@@ -587,6 +587,30 @@ tr:hover td {
     opacity: 1.0;
 }
 
+@media (max-width: 768px) {
+    .page-container {
+        padding: 15px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    input, select, .btn-action {
+        width: 100%;
+        min-width: 0;
+    }
+    
+    .input-short {
+        max-width: 100%;
+    }
+
+    .grid-items {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Scrollbar da página */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: var(--edna-black); }

@@ -182,4 +182,19 @@ input:focus {
 
 .btn-save:hover { filter: brightness(1.1); }
 .btn-cancel:hover { background-color: rgba(255,255,255,0.05); color: white; }
+
+@media (max-width: 600px) {
+  .modal-card {
+    width: 95% !important;
+    max-width: 95% !important;
+    padding: 15px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
 </style>

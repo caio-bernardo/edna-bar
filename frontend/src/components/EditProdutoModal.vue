@@ -198,4 +198,19 @@ input:focus {
 
 .btn-save:hover { filter: brightness(1.1); }
 .btn-cancel:hover { background-color: rgba(255,255,255,0.05); color: white; }
+
+@media (max-width: 600px) {
+  .modal-card {
+    width: 95% !important;
+    max-width: 95% !important;
+    padding: 15px;
+    max-height: 90vh; /* Evita que o modal estoure a altura da tela */
+    overflow-y: auto; /* Permite rolar dentro do modal se for muito grande */
+  }
+
+  .form-row {
+    flex-direction: column; /* Empilha inputs dentro do modal */
+    gap: 10px;
+  }
+}
 </style>

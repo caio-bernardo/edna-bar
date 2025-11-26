@@ -1311,4 +1311,40 @@ select:focus {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--edna-light-gray);
 }
+
+@media (max-width: 900px) {
+    .vendas-layout {
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+    }
+
+    .panel-left {
+        width: 100%;
+        box-sizing: border-box;
+        height: 500px;
+        order: 1;
+    }
+
+    .panel-right {
+        width: 100%;
+        box-sizing: border-box;
+        height: auto;
+        overflow: visible;
+        order: 2;
+    }
+
+    .receipt-paper {
+        height: 100%;
+    }
+
+    .catalog-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+    
+    .row {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
 </style>

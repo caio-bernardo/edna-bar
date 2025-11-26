@@ -622,4 +622,56 @@ input[type="date"]:focus {
     margin-top: 40px;
     font-style: italic;
 }
+
+@media (max-width: 768px) {
+    .page-container {
+        padding: 15px;
+    }
+
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-generate {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .month-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .month-title {
+        width: 100%;
+        justify-content: center;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        padding-bottom: 10px;
+    }
+
+    .summary-grid {
+        width: 100%;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .summary-item.highlight {
+        border-left: none;
+        border-top: 1px solid var(--edna-gray);
+        padding-left: 0;
+        padding-top: 15px;
+    }
+
+    .details-columns {
+        grid-template-columns: 1fr;
+    }
+    
+    .revenue-block {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+}
 </style>

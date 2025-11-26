@@ -163,10 +163,21 @@ const openGuide = (key) => {
                 </div>
             </section>
 
+            <div class="inspiration-section">
+                <div class="gallery-container">
+                    <img src="/edna_bar1.jpeg" alt="Foto do Bar da Edna 1" class="gallery-img">
+                    <img src="/edna_bar2.jpeg" alt="Foto do Bar da Edna 2" class="gallery-img">
+                </div>
+                <p class="inspiration-caption">
+                    Este site foi inspirado no bar da edna, o melhor da Bahia <span class="heart">❤️</span>
+                </p>
+            </div>
+
             <footer class="home-footer">
                 <p>
                     &copy; 2025 E.D.N.A Bar System - Projeto de Banco de Dados I
                 </p>
+                <a class="gh-link" href="https://github.com/caio-bernardo/edna-bar">Github</a>
             </footer>
         </div>
 
@@ -195,7 +206,6 @@ const openGuide = (key) => {
 </template>
 
 <style scoped>
-/* ... (Estilos anteriores mantidos) ... */
 .home-container {
     display: flex;
     flex-direction: column;
@@ -329,13 +339,13 @@ const openGuide = (key) => {
         border-color 0.2s,
         background-color 0.2s;
     text-align: left;
-    cursor: pointer; /* Indica que é clicável */
+    cursor: pointer;
 }
 
 .card-guide:hover {
     transform: translateY(-5px);
     border-color: var(--edna-yellow);
-    background-color: #353540; /* Leve destaque no fundo */
+    background-color: #353540;
 }
 
 .card-guide h3 {
@@ -358,6 +368,15 @@ const openGuide = (key) => {
     color: var(--edna-gray);
     font-size: 0.8rem;
     text-align: center;
+}
+
+.gh-link {
+    color: var(--edna-blue);
+    text-decoration: none;
+}
+
+.gh-link:hover {
+    text-decoration: underline;
 }
 
 @keyframes bounce {
@@ -441,7 +460,6 @@ const openGuide = (key) => {
     font-size: 1.1rem;
 }
 
-/* Animações do Modal */
 @keyframes slideUp {
     from {
         transform: translateY(20px);
@@ -463,6 +481,45 @@ const openGuide = (key) => {
     opacity: 0;
 }
 
+.inspiration-section {
+  margin-top: 60px;
+  text-align: center;
+  width: 100%;
+}
+
+.gallery-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 25px;
+}
+
+.gallery-img {
+  height: 500px; 
+  width: auto;
+  
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease;
+}
+
+.gallery-img:hover {
+  transform: scale(1.01); /* Leve zoom ao passar o mouse */
+}
+
+/* Texto da legenda abaixo das fotos */
+.inspiration-caption {
+  font-size: 1.5rem;
+  color: var(--edna-green);
+  font-weight: 500;
+}
+
+.heart {
+  color: var(--edna-red); /* Cor vermelha para o coração */
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
     .main-title {
@@ -476,6 +533,25 @@ const openGuide = (key) => {
     }
     .content-body {
         padding: 40px 5%;
+    }
+    .inspiration-section {
+        margin-top: 40px;
+    }
+
+    .gallery-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .gallery-img {
+        height: auto;
+        width: 90%;
+        max-height: 60vh;
+    }
+
+    .inspiration-caption {
+        font-size: 1.1rem;
+        padding: 0 15px;
     }
 }
 </style>

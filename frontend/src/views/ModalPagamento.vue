@@ -197,4 +197,19 @@ select {
         transform: translateY(0);
     }
 }
+
+@media (max-width: 600px) {
+  .modal-card {
+    width: 95% !important;
+    max-width: 95% !important;
+    padding: 15px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
 </style>

@@ -24,36 +24,76 @@
 <style>
 .navbar {
     display: flex;
-    justify-content: flex-end;
     align-items: center;
-    background-color: transparent;
-    color: white;
     position: absolute;
-    width: 100vw;
-    border: 0px;
-    margin: 1rem 0rem;
-    z-index: 100; /* ADICIONADO: Garante que o menu fique sobre o banner da Home */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 10vh;
+    
+    margin: 0;
+    border: 0;
+    padding: 0 20px;
+    box-sizing: border-box;
+    
+    z-index: 100;
+    background-color: transparent;
+    
+    justify-content: flex-end; 
 }
-.nav-brand {
-    font-weight: bold;
-}
+
 .nav-links {
     list-style: none;
     display: flex;
-    padding: 0px 2rem;
+    padding: 0;
+    margin: 0;
+    gap: 15px;
+    align-items: center;
+    height: 100%;
 }
+
 .nav-links li {
-    padding: 1vh 2vw;
+    flex-shrink: 0;
 }
+
 .nav-links a {
     color: var(--edna-black);
     text-decoration: none;
     font-weight: 500;
+    font-size: 1rem;
+    white-space: nowrap; 
+    transition: color 0.2s;
 }
-/* Ajuste para garantir leitura em fundos escuros/banners se necessário,
-   mas mantendo a lógica original */
+
 .nav-links a:hover,
 .nav-links a.router-link-active {
     color: var(--edna-yellow);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        justify-content: flex-start;
+        
+        overflow-x: auto;
+        overflow-y: hidden;
+        
+        -webkit-overflow-scrolling: touch; 
+        
+        scrollbar-width: none;
+    }
+    
+    .navbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .nav-links {
+        flex-wrap: nowrap;
+        padding-right: 20px;
+    }
+    
+    .nav-links a {
+        padding: 10px 5px;
+    }
 }
 </style>

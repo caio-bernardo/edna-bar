@@ -879,4 +879,74 @@ button:hover {
     opacity: 1;
     transform: scale(1.2);
 }
+
+@media (max-width: 900px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-inline {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .form-inline input {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .btn-add {
+        width: 100%;
+        height: 40px;
+    }
+
+    .card-produto {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .card-main {
+        width: 100%;
+    }
+
+    .card-top {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .card-details {
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 5px;
+    }
+
+    .card-actions {
+        width: 100%;
+        justify-content: flex-end;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 10px;
+        margin-top: 5px;
+    }
+
+    .form-stack .row {
+        flex-direction: column;
+    }
+    
+    .form-stack .values {
+        flex-direction: column;
+    }
+    
+    .btn-save {
+        width: 100%;
+        margin-top: 10px;
+        padding: 12px;
+    }
+}
 </style>
