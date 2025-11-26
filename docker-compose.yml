@@ -9,8 +9,8 @@ services:
       POSTGRES_DB: ${DB_DATABASE}
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "${DB_PORT}:5432"
+    networks:
+      - internal
     volumes:
       - psql_volume_bp:/var/lib/postgresql/data
 
@@ -20,27 +20,56 @@ services:
       dockerfile: Dockerfile
       target: runner
     container_name: edna-bar-backend
-    ports:
-      - 8080:8080
+    networks:
+      - internal
     env_file:
       - .env
     restart: unless-stopped
     depends_on:
       - database
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      target: runner
+      target: builder
     container_name: edna-frontend
-    ports:
-      - "80:80"
+    networks:
+      - internal
     env_file:
       - .env
     restart: unless-stopped
+
+  nginx:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: runner
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/conf.d/certs:/etc/ssl/cloudflare:ro
+      - ./frontend/dist:/usr/share/nginx/html:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - web
+      - internal
+    restart: unless-stopped
     depends_on:
+      - frontend
       - backend
 
 volumes:
   psql_volume_bp:
+
+networks:
+  web:
+    driver: bridge
+  internal:
+    driver: bridge

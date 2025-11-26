@@ -42,23 +42,13 @@ COPY . .
 RUN npm run build --if-present
 
 ################################
-# Runner stage
+# Runner stage (Used for deploy)
 ################################
 FROM nginx:stable-alpine AS runner
-
-# Remove the default nginx config
-RUN rm -f /etc/nginx/conf.d/default.conf
 
 # Copy built assets from the builder stage to nginx html directory.
 # Vite outputs to `/app/dist` by default — adjust if your build produces a different folder.
 COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Use project-provided nginx configuration instead of generating one.
-# Place your `nginx.conf` in the build context so it will be copied into the image.
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Expose http port
-EXPOSE 80
 
 # Use the default nginx foreground cmd for Docker images
 CMD ["nginx", "-g", "daemon off;"]
