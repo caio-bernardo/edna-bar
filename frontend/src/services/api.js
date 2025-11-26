@@ -3,8 +3,10 @@ import axios from "axios";
 // Cria uma instância do axios que já aponta para o seu back-end
 // Usa a variável de ambiente BACKEND_BASE_URL quando disponível, com fallback para http://localhost/api/v1
 
+const BACKEND_BASE = import.meta.env.VITE_BACKEND_BASE_URL || "/api/v1";
+
 const apiClient = axios.create({
-  baseURL: "http://localhost:8080/v1", // O BasePath que definimos!
+  baseURL: BACKEND_BASE, // O BasePath que definimos!
   headers: {
     "Content-Type": "application/json",
   },
@@ -98,9 +100,6 @@ export default {
   },
   getClientes(filters = null) {
     return apiClient.get("/clientes");
-  },
-  getClienteSaldo(id) {
-    return apiClient.get(`/clientes/${id}/saldo`);
   },
   createCliente(data) {
     return apiClient.post("/clientes", data);

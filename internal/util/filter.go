@@ -155,7 +155,7 @@ func (ff *Filter) GetFilterTime(params url.Values, key string) error {
 			return errors.New(fmt.Sprintf("Invalid operator for query `%s`", filterKey))
 		}
 
-		v, err := time.Parse("2025-01-01 00:00:00", parts[1])
+		v, err := time.Parse("2006-01-02 15:04:05", parts[1])
 		if err != nil {
 			return err
 		}
