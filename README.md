@@ -34,8 +34,10 @@ Antes de mais nada tenha o Docker instalado com Docker Compose.
 Configure as variáveis de ambiente em um arquivo `.env` seguindo os exemplos em `.env.example`.
 
 Inicie os containers com o comando `docker compose up -d`. Popule a base de dados rodando as migrações com o script: `./migrate.sh up`.
+
+> Atualize o script `migrate.sh` com a `DB_URL` e os valores corretos definidos em `.env`.
  
-Feito isso, acesse o frontend através do endereço `http://localhost:80` e o backend em `http://localhost:80/api` ou `http://localhost:8080`.
+Feito isso, acesse o frontend através do endereço `http://localhost:80` e o backend em `http://localhost:80/api`.
 
 > Atenção, esse modo foi pensando para ser rodado em produção. Confira a próxima seção para saber como desenvolver esse projeto.
 
